@@ -2,4 +2,12 @@
     <string name="app_name">AplicacaoCliente</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_cadastrar">Cadastrar</string>
+
+    <!-- Tela Login-->
+    <string name="title_login">Login</string>
+    <string name="lbl_email">Email</string>
+    <string name="lbl_password">Senha</string>
+    <string name="lbl_forgot_password">Esqueceu a senha?</string>
+    <string name="lbl_register">Não está cadastrado?</string>
+    <string name="btn_login">Entrar</string>
 </resources>

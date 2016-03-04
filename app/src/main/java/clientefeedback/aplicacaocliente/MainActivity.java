@@ -25,12 +25,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import clientefeedback.aplicacaocliente.Empresa.CadastrarActivity;
+import clientefeedback.aplicacaocliente.Login.LoginActivity;
 import clientefeedback.aplicacaocliente.Models.Empresa;
 import clientefeedback.aplicacaocliente.Services.Url;
 import clientefeedback.aplicacaocliente.Services.WebService;
 
 public class MainActivity extends AppCompatActivity {
     Button botaoCadastrar;
+    Button botaoLogin;
     Context c;
 
     @Override
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         botaoCadastrar = (Button)findViewById(R.id.button);
+        botaoLogin = (Button)findViewById(R.id.buttonLogin);
         c = this;
 
         botaoCadastrar.setOnClickListener(new View.OnClickListener(){
@@ -45,6 +48,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 intent = new Intent(c,CadastrarActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        botaoLogin.setOnClickListener(new View.OnClickListener(){
+            Intent intent;
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(c,LoginActivity.class);
                 startActivity(intent);
             }
         });
