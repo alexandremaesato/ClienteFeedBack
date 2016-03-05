@@ -10,4 +10,5 @@
     <string name="lbl_forgot_password">Esqueceu a senha?</string>
     <string name="lbl_register">Não está cadastrado?</string>
     <string name="btn_login">Entrar</string>
+    <string name="title_activity_dialog_fragment">DialogFragmentActivity</string>
 </resources>

@@ -1,5 +1,6 @@
 package clientefeedback.aplicacaocliente.Services;
 
+import android.net.http.HttpsConnection;
 import android.util.Log;
 
 import org.apache.http.HttpResponse;
@@ -25,6 +26,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -53,7 +56,7 @@ public class WebService{
  
     //Use this method to do a HttpPost\WebInvoke on a Web Service
     public String webInvoke(String methodName, Map<String, Object> params) {
- 
+
         JSONObject jsonObject = new JSONObject();
  
         for (Map.Entry<String, Object> param : params.entrySet()){
@@ -158,14 +161,20 @@ public class WebService{
  
   //Use this method to do a HttpGet/WebGet on the web service
     public String doPost(String methodName, String params) {
+        String auth = GeradorIdentificacaoRequisicao.geraIdDaRequisicao("1",params );
+
+        List<String> array = new ArrayList<String>();
+        array.add(auth);
+        array.add(params);
+
         String getUrl = webServiceUrl + methodName;
- 
         httpPost = new HttpPost(getUrl);
 
         try {
             //
                 httpPost.setHeader("Content-type", "application/json");
-                StringEntity sEntity = new StringEntity(params, "UTF-8");
+                StringEntity sEntity = new StringEntity(array.toString(), "UTF-8");
+
                 httpPost.setEntity(sEntity);
             //
 //			httpPost.setEntity(new UrlEncodedFormEntity(params));
@@ -237,4 +246,6 @@ public class WebService{
             System.out.println("Your App Name Here" + e);
         }
     }
+
+
 }
