@@ -9,16 +9,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import com.google.gson.Gson;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import clientefeedback.aplicacaocliente.Models.Empresa;
+import clientefeedback.aplicacaocliente.Models.Pessoa;
 import clientefeedback.aplicacaocliente.R;
 import clientefeedback.aplicacaocliente.Services.Url;
 import clientefeedback.aplicacaocliente.Services.WebService;
@@ -43,7 +38,6 @@ public class CadastrarActivity extends AppCompatActivity {
         cnpj = (EditText)findViewById(R.id.editTextCnpj);
         descricao = (EditText)findViewById(R.id.editTextDescricao);
 
-
         botao.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 spinner.setVisibility(View.VISIBLE);
@@ -51,24 +45,28 @@ public class CadastrarActivity extends AppCompatActivity {
                 new Thread(){
                     public void run() {
 
-                        WebService ws = new WebService(Url.cadastrarEmpresaUrl());
+                        WebService ws = new WebService(Url.getUrl()+"Services/");
                         Map params = new HashMap();
 
                         Empresa emp = new Empresa();
-                        emp.setNome(nome.getText().toString());
+                        emp.setNomeEmpresa(nome.getText().toString());
                         emp.setCnpj(cnpj.getText().toString());
                         emp.setDescricao(descricao.getText().toString());
 
-                        Gson g = new Gson();
-                        String empresa  = g.toJson(emp);
+                        //Pegar do Banco de Dados do Android
+                        Pessoa pessoa =  new Pessoa();
+                        pessoa.setNome("Nome de Teste");
 
-//                List<NameValuePair> params2 = new ArrayList<NameValuePair>();
-//                params2.add(new BasicNameValuePair("empresa", empresa));
+                        Gson g = new Gson();
+
+                        params.put("empresa", emp);
+                        params.put("pessoa", pessoa);
 
                         try{
-                            String response = ws.doPost("", empresa);
+                            String response = ws.doPost("cadastrarEmpresa", g.toJson(params));
+                            System.out.println("Resultado: "+response);
 //                    String response = ws.webGet("pegarEmpresas", params);
-                            JSONObject json = new JSONObject(response);
+                            //JSONObject json = new JSONObject(response);
 //
 //                    JSONObject jsonUsuario = new JSONObject(json.getString("usuario")); //Pega o Json e faz um load apenas dos dados do Usuario em um novo Json
 //                    Usuario u = new Usuario();
@@ -81,23 +79,25 @@ public class CadastrarActivity extends AppCompatActivity {
 //                    }else {
 //                        b.putString("message", "Algo deu errado!!!");
 //                    }
-//
-                    Bundle b = new Bundle();
-                            b.putString("message", "Foi de boa");
                     Message msg = new Message();
-                    msg.setData(b);
+                    do {
+                        String res = response;
+                        Bundle b = new Bundle();
+                        b.putString("msg", response);
+
+                        msg.setData(b);
+                    }while(response == null);
 //
-////                    handler.sendMessage(msg);
-                    handler.sendMessageAtTime(msg,3000);
+                   handler.sendMessage(msg);
+                   // handler.sendMessageAtTime(msg,3000);
 //
 //
-                        }catch (JSONException e1){
-//                    Message msg = new Message();
-//                    Bundle b= new Bundle();
-//                    b.putString("msg", "erro");
-//                    msg.setData(b);
-                        handler.sendMessage(new Message());
-//                    //e1.printStackTrace();
+                        }catch (Exception e) {
+                            Message msg = new Message();
+                            Bundle b= new Bundle();
+                            b.putString("msg", "erro");
+                            msg.setData(b);
+                            handler.sendMessage(msg);
                         }
                     }
                 }.start();
@@ -109,6 +109,8 @@ public class CadastrarActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg){
             spinner.setVisibility(View.GONE);
+            System.out.println("MSG: "+msg);
+            Toast.makeText(CadastrarActivity.this, msg.getData().getString("msg"), Toast.LENGTH_SHORT).show();
 
 //            if( msg != null ) {
 //                String idUsuario = msg.getData().getString("id");

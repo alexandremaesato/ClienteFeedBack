@@ -1,7 +1,6 @@
 package clientefeedback.aplicacaocliente.Services;
 
 
-import android.preference.PreferenceActivity;
 import android.util.Log;
 
 import org.apache.http.HttpResponse;
@@ -11,7 +10,6 @@ import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
@@ -33,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class WebService{
+public class WebService2 {
 
     DefaultHttpClient httpClient;
     HttpContext localContext;
@@ -43,9 +41,9 @@ public class WebService{
     HttpPost httpPost = null;
     HttpGet httpGet = null;
     String webServiceUrl;
- 
+
     //The serviceName should be the name of the Service you are going to be using.
-    public WebService(String serviceName){
+    public WebService2(String serviceName){
         HttpParams myParams = new BasicHttpParams();
  
         HttpConnectionParams.setConnectionTimeout(myParams, 10000);
@@ -164,25 +162,25 @@ public class WebService{
   //Use this method to do a HttpGet/WebGet on the web service
     public String doPost(String methodName, String params) {
 
-//        String data = String.valueOf(System.currentTimeMillis());
-//        String auth = GeradorIdentificacaoRequisicao.geraIdDaRequisicao("login", "senha", "sharedKey", params);
-//        List<String> array = new ArrayList<String>();
-//        array.add(auth);
-//        array.add(params);
-//        array.add(data);
-//        //System.out.println("Array: " + array.toString());
-//        System.out.println("Paramentros: " + params);
+        String data = String.valueOf(System.currentTimeMillis());
+
+        String auth = GeradorIdentificacaoRequisicao.geraIdDaRequisicao("login", "senha", "sharedKey", params);
+
+        List<String> array = new ArrayList<String>();
+        array.add(auth);
+        array.add(params);
+        array.add(data);
+        System.out.println("Array: " + array.toString());
 
         String getUrl = webServiceUrl + methodName;
 
 
         httpPost = new HttpPost(getUrl);
-
+        httpPost.addHeader("Authorization","Basic dXNlcjpwYXNzd29yZA==");
         try {
             //
                 httpPost.setHeader("Content-type", "application/json");
-                httpPost.addHeader("Authorization", "Basic dXNlcjpwYXNzd29yZA==");
-                StringEntity sEntity = new StringEntity(params, "UTF-8");
+                StringEntity sEntity = new StringEntity("", "UTF-8");
 
                 httpPost.setEntity(sEntity);
             //
@@ -197,7 +195,6 @@ public class WebService{
         
         try {
             response = httpClient.execute(httpPost);
-            System.out.println("STATUS: "+response.getStatusLine());
         } catch (Exception e) {
             Log.e("Groshie:", e.getMessage());
         }

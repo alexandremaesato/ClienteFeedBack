@@ -25,21 +25,11 @@ public class GeradorIdentificacaoRequisicao {
     private String sharedKey;
     private String metodo;
 
-    public static String geraIdDaRequisicao(String sharedKey, String metodo) {
-        //String uri = request.getURI();
-        Long data = System.currentTimeMillis();
-
-        List<String> lista = new ArrayList<String>();
-        lista.add(sharedKey);
-        lista.add(metodo);
-        lista.add(String.valueOf(data));
-
-        String json = new Gson().toJson(lista);
-
-        //String id = metodo + DELIMITADOR + data + DELIMITADOR + sharedKey;
+    public static String geraIdDaRequisicao(String login, String senha, String sharedKey, String metodo) {
+        String id = login + senha + metodo + sharedKey;
 
         try {
-            return Criptografia.gerarCriptografia(json);
+            return Criptografia.gerarCriptografia(id);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             return null;

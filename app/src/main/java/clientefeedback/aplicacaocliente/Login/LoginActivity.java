@@ -1,7 +1,10 @@
 package clientefeedback.aplicacaocliente.Login;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -10,10 +13,14 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import clientefeedback.aplicacaocliente.Empresa.CadastrarActivity;
 import clientefeedback.aplicacaocliente.R;
+import clientefeedback.aplicacaocliente.Services.Url;
+import clientefeedback.aplicacaocliente.Services.WebService;
 
 public class LoginActivity extends AppCompatActivity {
     EditText email;
@@ -23,6 +30,8 @@ public class LoginActivity extends AppCompatActivity {
     Button btnEnviar;
     private Resources resources;
     Context c;
+    WebService ws = new WebService(Url.getUrl());
+    ProgressBar spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +42,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void initViews() {
         resources = getResources();
-
         TextWatcher textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -55,12 +63,27 @@ public class LoginActivity extends AppCompatActivity {
         naoCadastrado = (TextView) findViewById(R.id.textNaoCadastrado);
         esqueceuSenha = (TextView) findViewById(R.id.textEsqueceuSenha);
         btnEnviar = (Button) findViewById(R.id.buttonLoginEntrar);
+        spinner = (ProgressBar) findViewById(R.id.progressBarLogin);
+        spinner.setVisibility(View.GONE);
 
         btnEnviar.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (validateFields()) {
-                    DialogLogin dl = new DialogLogin();
-                    dl.enviar(c);
+                    //DialogLogin dl = new DialogLogin();
+                    //dl.enviar(c);
+                    spinner.setVisibility(View.VISIBLE);
+                    new Thread() {
+                        public void run() {
+                            WebService ws = new WebService(Url.getUrl());
+                            String response = ws.doPost("autenticacao/logar","");
+
+                            if("".equals(response)){
+                                Intent intent = new Intent(c,CadastrarActivity.class);
+                                startActivity(intent);
+                                handler.sendMessage(new Message());
+                            }
+                        }
+                    }.start();
                 }
 
             }
@@ -122,6 +145,14 @@ public class LoginActivity extends AppCompatActivity {
             editText.setError(null);
         }
     }
+
+    public Handler handler = new Handler(){
+
+        @Override
+        public void handleMessage(Message msg){
+            spinner.setVisibility(View.GONE);
+        }
+    };
 
 
 }
