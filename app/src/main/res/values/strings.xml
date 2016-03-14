@@ -11,4 +11,8 @@
     <string name="lbl_register">Não está cadastrado?</string>
     <string name="btn_login">Entrar</string>
     <string name="title_activity_dialog_fragment">DialogFragmentActivity</string>
+    <string name="email_required">Email Obrigatório</string>
+    <string name="password_required">Senha Obrigatório</string>
+    <string name="email_required_size_invalid">Seu email deve ter entre 4 e 15 caracteres!</string>
+    <string name="password_required_size_invalid">Sua senha deve ter entre 6 e 15 caracteres!</string>>
 </resources>

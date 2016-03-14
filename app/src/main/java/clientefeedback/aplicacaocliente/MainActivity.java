@@ -15,6 +15,8 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.accounts.AccountManager;
+
 
 import com.google.gson.Gson;
 
@@ -30,10 +32,14 @@ import clientefeedback.aplicacaocliente.Models.Empresa;
 import clientefeedback.aplicacaocliente.Services.Url;
 import clientefeedback.aplicacaocliente.Services.WebService;
 
+import static android.accounts.AccountManager.newChooseAccountIntent;
+
 public class MainActivity extends AppCompatActivity {
     Button botaoCadastrar;
     Button botaoLogin;
+    Button btnLoginTeste2;
     Context c;
+    int SOME_REQUEST_CODE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         botaoCadastrar = (Button)findViewById(R.id.button);
         botaoLogin = (Button)findViewById(R.id.buttonLogin);
+        btnLoginTeste2 = (Button) findViewById(R.id.btnLoginTeste2);
         c = this;
 
         botaoCadastrar.setOnClickListener(new View.OnClickListener(){
@@ -58,6 +65,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 intent = new Intent(c,LoginActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        btnLoginTeste2.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                WebService ws = new WebService(Url.getUrl());
+                ws.doPost("Services/teste","");
             }
         });
     }
@@ -83,6 +99,9 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
+
 
 
 
