@@ -45,7 +45,7 @@ public class CadastrarActivity extends AppCompatActivity {
                 new Thread(){
                     public void run() {
 
-                        WebService ws = new WebService(Url.getUrl()+"Services/");
+                        WebService ws = new WebService(Url.getUrl()+"Empresa/");
                         Map params = new HashMap();
 
                         Empresa emp = new Empresa();
@@ -55,15 +55,17 @@ public class CadastrarActivity extends AppCompatActivity {
 
                         //Pegar do Banco de Dados do Android
                         Pessoa pessoa =  new Pessoa();
-                        pessoa.setNome("Nome de Teste");
+                        pessoa.setNomePessoa("Nome de Teste");
+                        pessoa.setPessoaid(1);
 
                         Gson g = new Gson();
 
                         params.put("empresa", emp);
                         params.put("pessoa", pessoa);
+                        String teste = g.toJson(params);
 
                         try{
-                            String response = ws.doPost("cadastrarEmpresa", g.toJson(params));
+                            String response = ws.doPost("cadastrarEmpresa", teste );
                             System.out.println("Resultado: "+response);
 //                    String response = ws.webGet("pegarEmpresas", params);
                             //JSONObject json = new JSONObject(response);

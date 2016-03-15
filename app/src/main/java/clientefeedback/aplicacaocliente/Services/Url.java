@@ -11,5 +11,5 @@ public class Url {
     public static String getUrl() {
         return url;
     }
-    public static String cadastrarEmpresaUrl() {return url+"/Services/cadastrarEmpresa";}
+    public static String cadastrarEmpresaUrl() {return url+"/Empresa/cadastrarEmpresa";}
 }
