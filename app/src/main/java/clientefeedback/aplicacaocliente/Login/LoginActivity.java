@@ -17,7 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import clientefeedback.aplicacaocliente.Empresa.CadastrarActivity;
+import clientefeedback.aplicacaocliente.Empresa.CadastrarEmpresaActivity;
 import clientefeedback.aplicacaocliente.R;
 import clientefeedback.aplicacaocliente.Services.Url;
 import clientefeedback.aplicacaocliente.Services.WebService;
@@ -78,7 +78,7 @@ public class LoginActivity extends AppCompatActivity {
                             String response = ws.doPost("autenticacao/logar","");
 
                             if("".equals(response)){
-                                Intent intent = new Intent(c,CadastrarActivity.class);
+                                Intent intent = new Intent(c,CadastrarEmpresaActivity.class);
                                 startActivity(intent);
                                 handler.sendMessage(new Message());
                             }

@@ -6,7 +6,7 @@ package clientefeedback.aplicacaocliente.Services;
 public class Url {
 
     //private String url = "http://192.168.25.15:8080/ServidorAplicativo/webresources";
-    private static String url = "http://192.168.1.7:8080/ServidorAplicativo/webresources/";
+    private static String url = "http://172.20.82.32:8080/ServidorAplicativo/webresources/";
 
     public static String getUrl() {
         return url;

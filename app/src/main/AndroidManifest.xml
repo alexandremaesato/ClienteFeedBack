@@ -20,7 +20,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Empresa.CadastrarActivity" />
+        <activity android:name=".Empresa.CadastrarEmpresaActivity" />
         <activity android:name=".Login.LoginActivity" />
         <activity
             android:name=".Helpers.DialogFragmentActivity"
