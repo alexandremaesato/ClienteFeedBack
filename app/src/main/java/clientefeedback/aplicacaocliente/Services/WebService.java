@@ -1,9 +1,15 @@
 package clientefeedback.aplicacaocliente.Services;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.preference.PreferenceActivity;
+
+import android.util.Base64OutputStream;
 import android.util.Log;
 
+
+import android.util.Base64;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -32,6 +38,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import clientefeedback.aplicacaocliente.BD.AutenticacaoDao;
+import clientefeedback.aplicacaocliente.R;
+
 
 public class WebService{
 
@@ -43,9 +52,10 @@ public class WebService{
     HttpPost httpPost = null;
     HttpGet httpGet = null;
     String webServiceUrl;
+    String autenticacaoString = null;
  
     //The serviceName should be the name of the Service you are going to be using.
-    public WebService(String serviceName){
+    public WebService(String serviceName, String autenticacaoString){
         HttpParams myParams = new BasicHttpParams();
  
         HttpConnectionParams.setConnectionTimeout(myParams, 10000);
@@ -53,7 +63,8 @@ public class WebService{
         httpClient = new DefaultHttpClient(myParams);
         localContext = new BasicHttpContext();
         webServiceUrl = serviceName;
- 
+        this.autenticacaoString = autenticacaoString;
+
     }
  
     //Use this method to do a HttpPost\WebInvoke on a Web Service
@@ -179,9 +190,10 @@ public class WebService{
         httpPost = new HttpPost(getUrl);
 
         try {
-            //
+
+                String criptografado = Base64.encodeToString(autenticacaoString.getBytes(),0);
                 httpPost.setHeader("Content-type", "application/json");
-                httpPost.addHeader("Authorization", "Basic dXNlcjpwYXNzd29yZA==");
+            httpPost.addHeader("Authorization", criptografado);
                 StringEntity sEntity = new StringEntity(params, "UTF-8");
 
                 httpPost.setEntity(sEntity);

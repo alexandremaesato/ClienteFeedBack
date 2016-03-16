@@ -14,5 +14,11 @@
     <string name="email_required">Email Obrigatório</string>
     <string name="password_required">Senha Obrigatório</string>
     <string name="email_required_size_invalid">Seu email deve ter entre 4 e 15 caracteres!</string>
-    <string name="password_required_size_invalid">Sua senha deve ter entre 6 e 15 caracteres!</string>>
+    <string name="password_required_size_invalid">Sua senha deve ter entre 6 e 15 caracteres!</string>
+
+    <!-- Valores de Dados Compartilhados -->
+    <string name="SharedPreferences">SharedPreferences</string>
+    <string name="login">login</string>
+    <string name="senha">senha</string>
+
 </resources>

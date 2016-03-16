@@ -1,5 +1,6 @@
 package clientefeedback.aplicacaocliente.Empresa;
 
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -9,9 +10,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
 import com.google.gson.Gson;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import clientefeedback.aplicacaocliente.BD.AutenticacaoDao;
 import clientefeedback.aplicacaocliente.Models.Empresa;
 import clientefeedback.aplicacaocliente.Models.Pessoa;
 import clientefeedback.aplicacaocliente.R;
@@ -25,27 +30,28 @@ public class CadastrarActivity extends AppCompatActivity {
     EditText descricao;
     Button botao;
     ProgressBar spinner;
+    WebService ws;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastrar);
 
-        botao = (Button)findViewById(R.id.buttonSave);
-        spinner = (ProgressBar)findViewById(R.id.progressBar1);
+        botao = (Button) findViewById(R.id.buttonSave);
+        spinner = (ProgressBar) findViewById(R.id.progressBar1);
         spinner.setVisibility(View.GONE);
-        nome = (EditText)findViewById(R.id.editTextNomeEmpresa);
-        cnpj = (EditText)findViewById(R.id.editTextCnpj);
-        descricao = (EditText)findViewById(R.id.editTextDescricao);
+        nome = (EditText) findViewById(R.id.editTextNomeEmpresa);
+        cnpj = (EditText) findViewById(R.id.editTextCnpj);
+        descricao = (EditText) findViewById(R.id.editTextDescricao);
 
         botao.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 spinner.setVisibility(View.VISIBLE);
 
-                new Thread(){
+                new Thread() {
                     public void run() {
-
-                        WebService ws = new WebService(Url.getUrl()+"Services/");
+                        ws = new WebService(Url.cadastrarEmpresaUrl(),getAutenticacao());
                         Map params = new HashMap();
 
                         Empresa emp = new Empresa();
@@ -54,7 +60,7 @@ public class CadastrarActivity extends AppCompatActivity {
                         emp.setDescricao(descricao.getText().toString());
 
                         //Pegar do Banco de Dados do Android
-                        Pessoa pessoa =  new Pessoa();
+                        Pessoa pessoa = new Pessoa();
                         pessoa.setNome("Nome de Teste");
 
                         Gson g = new Gson();
@@ -62,9 +68,9 @@ public class CadastrarActivity extends AppCompatActivity {
                         params.put("empresa", emp);
                         params.put("pessoa", pessoa);
 
-                        try{
-                            String response = ws.doPost("cadastrarEmpresa", g.toJson(params));
-                            System.out.println("Resultado: "+response);
+                        try {
+                            String response = ws.doPost("", g.toJson(params));
+                            System.out.println("Resultado: " + response);
 //                    String response = ws.webGet("pegarEmpresas", params);
                             //JSONObject json = new JSONObject(response);
 //
@@ -79,22 +85,22 @@ public class CadastrarActivity extends AppCompatActivity {
 //                    }else {
 //                        b.putString("message", "Algo deu errado!!!");
 //                    }
-                    Message msg = new Message();
-                    do {
-                        String res = response;
-                        Bundle b = new Bundle();
-                        b.putString("msg", response);
-
-                        msg.setData(b);
-                    }while(response == null);
-//
-                   handler.sendMessage(msg);
-                   // handler.sendMessageAtTime(msg,3000);
-//
-//
-                        }catch (Exception e) {
                             Message msg = new Message();
-                            Bundle b= new Bundle();
+                            do {
+                                String res = response;
+                                Bundle b = new Bundle();
+                                b.putString("msg", response);
+
+                                msg.setData(b);
+                            } while (response == null);
+//
+                            handler.sendMessage(msg);
+                            // handler.sendMessageAtTime(msg,3000);
+//
+//
+                        } catch (Exception e) {
+                            Message msg = new Message();
+                            Bundle b = new Bundle();
                             b.putString("msg", "erro");
                             msg.setData(b);
                             handler.sendMessage(msg);
@@ -104,18 +110,19 @@ public class CadastrarActivity extends AppCompatActivity {
             }
         });
     }
-    public Handler handler = new Handler(){
+
+    public Handler handler = new Handler() {
 
         @Override
-        public void handleMessage(Message msg){
+        public void handleMessage(Message msg) {
             spinner.setVisibility(View.GONE);
-            System.out.println("MSG: "+msg);
+            System.out.println("MSG: " + msg);
             Toast.makeText(CadastrarActivity.this, msg.getData().getString("msg"), Toast.LENGTH_SHORT).show();
 
 //            if( msg != null ) {
 //                String idUsuario = msg.getData().getString("id");
 //                String nome = msg.getData().getString("nome");
-                //tostando(idUsuario);
+            //tostando(idUsuario);
 //                if(idUsuario != null) {
 //                    iniciaDashboard(idUsuario, nome);
 //                }else
@@ -125,4 +132,9 @@ public class CadastrarActivity extends AppCompatActivity {
             //}
         }
     };
+
+    public String getAutenticacao(){
+        sharedPreferences = getSharedPreferences(getString(R.string.SharedPreferences), CONTEXT_RESTRICTED);
+        return sharedPreferences.getString(getString(R.string.login)+":"+getString(R.string.senha), "");
+    }
 }

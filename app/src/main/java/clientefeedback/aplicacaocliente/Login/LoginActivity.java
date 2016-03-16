@@ -2,6 +2,7 @@ package clientefeedback.aplicacaocliente.Login;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Handler;
 import android.os.Message;
@@ -17,7 +18,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import clientefeedback.aplicacaocliente.BD.AutenticacaoDao;
+import clientefeedback.aplicacaocliente.BD.AutenticacaoOpenHelper;
 import clientefeedback.aplicacaocliente.Empresa.CadastrarActivity;
+import clientefeedback.aplicacaocliente.Models.Autenticacao;
 import clientefeedback.aplicacaocliente.R;
 import clientefeedback.aplicacaocliente.Services.Url;
 import clientefeedback.aplicacaocliente.Services.WebService;
@@ -29,19 +33,29 @@ public class LoginActivity extends AppCompatActivity {
     TextView esqueceuSenha;
     Button btnEnviar;
     private Resources resources;
+    WebService ws;
     Context c;
-    WebService ws = new WebService(Url.getUrl());
+    String autenticacao;
+    SharedPreferences prefs;
+    String novaSenha;
+    String novoLogin;
+
     ProgressBar spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+
+
         initViews();
+
     }
 
     private void initViews() {
         resources = getResources();
+        prefs = getSharedPreferences("autenticacao", Context.MODE_PRIVATE);
         TextWatcher textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -59,7 +73,9 @@ public class LoginActivity extends AppCompatActivity {
 
         c = this;
         email = (EditText) findViewById(R.id.editEmail);
+        email.setText(prefs.getString(getString(R.string.login),""));
         senha = (EditText) findViewById(R.id.editPassword);
+        senha.setText(prefs.getString(getString(R.string.senha),""));
         naoCadastrado = (TextView) findViewById(R.id.textNaoCadastrado);
         esqueceuSenha = (TextView) findViewById(R.id.textEsqueceuSenha);
         btnEnviar = (Button) findViewById(R.id.buttonLoginEntrar);
@@ -69,12 +85,18 @@ public class LoginActivity extends AppCompatActivity {
         btnEnviar.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (validateFields()) {
-                    //DialogLogin dl = new DialogLogin();
-                    //dl.enviar(c);
                     spinner.setVisibility(View.VISIBLE);
                     new Thread() {
                         public void run() {
-                            WebService ws = new WebService(Url.getUrl());
+
+                            novoLogin = email.getText().toString();
+                            novaSenha = senha.getText().toString();
+
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putString(getString(R.string.login), novoLogin);
+                            editor.putString(getString(R.string.senha), novaSenha);
+                            editor.commit();
+                            ws = new WebService(Url.getUrl(), novoLogin+":"+novaSenha);
                             String response = ws.doPost("autenticacao/logar","");
 
                             if("".equals(response)){
@@ -153,7 +175,6 @@ public class LoginActivity extends AppCompatActivity {
             spinner.setVisibility(View.GONE);
         }
     };
-
 
 }
 
