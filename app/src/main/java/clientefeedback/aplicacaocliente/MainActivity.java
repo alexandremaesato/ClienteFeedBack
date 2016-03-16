@@ -2,17 +2,15 @@ package clientefeedback.aplicacaocliente;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
-
-
 import clientefeedback.aplicacaocliente.Empresa.CadastrarEmpresaActivity;
 import clientefeedback.aplicacaocliente.Login.LoginActivity;
-import clientefeedback.aplicacaocliente.Services.Url;
 import clientefeedback.aplicacaocliente.Services.WebService;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,7 +18,9 @@ public class MainActivity extends AppCompatActivity {
     Button botaoLogin;
     Button btnLoginTeste2;
     Context c;
-    int SOME_REQUEST_CODE;
+    WebService ws;
+    SharedPreferences sharedPreferences;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,11 +31,16 @@ public class MainActivity extends AppCompatActivity {
         btnLoginTeste2 = (Button) findViewById(R.id.btnLoginTeste2);
         c = this;
 
-        botaoCadastrar.setOnClickListener(new View.OnClickListener(){
+        Context context = this;
+        sharedPreferences = getSharedPreferences(getString(R.string.SharedPreferences), Context.MODE_PRIVATE);
+
+        botaoCadastrar.setOnClickListener(new View.OnClickListener() {
             Intent intent;
+
             @Override
             public void onClick(View v) {
                 intent = new Intent(c,CadastrarEmpresaActivity.class);
+
                 startActivity(intent);
             }
         });
@@ -53,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                WebService ws = new WebService(Url.getUrl());
-                ws.doPost("Services/teste","");
+
+                ws.doPost("Services/teste", "");
             }
         });
     }
@@ -80,8 +85,6 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
 
 
 

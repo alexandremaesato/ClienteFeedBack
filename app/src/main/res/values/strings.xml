@@ -14,5 +14,23 @@
     <string name="email_required">Email Obrigatório</string>
     <string name="password_required">Senha Obrigatório</string>
     <string name="email_required_size_invalid">Seu email deve ter entre 4 e 15 caracteres!</string>
-    <string name="password_required_size_invalid">Sua senha deve ter entre 6 e 15 caracteres!</string>>
+    <string name="password_required_size_invalid">Sua senha deve ter entre 6 e 15 caracteres!</string>
+    <string name="endereco">Endereço da Empresa</string>
+    <string name="rua">Rua:</string>
+    <string name="numero_casa">Número:</string>
+    <string name="bairro">Bairro:</string>
+    <string name="cep">CEP:</string>
+    <string name="cidade">Cidade:</string>
+    <string name="estado">Estado:</string>
+    <string name="pais">País:</string>
+    <string name="descricao_empresa">Descrição da Empresa:</string>
+    <string name="telefones_contato">Telefones de Contato da Empresa</string>
+    <string name="telefone_tipo">Tipo do Telefone:</string>
+    <string name="telefone_numero">Número do Telefone:</string>
+
+    <!-- Valores de Dados Compartilhados -->
+    <string name="SharedPreferences">SharedPreferences</string>
+    <string name="login">login</string>
+    <string name="senha">senha</string>
+
 </resources>
