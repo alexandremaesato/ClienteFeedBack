@@ -9,14 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-import com.google.gson.Gson;
-import java.util.HashMap;
-import java.util.Map;
-import clientefeedback.aplicacaocliente.Models.Empresa;
-import clientefeedback.aplicacaocliente.Models.Pessoa;
+
 import clientefeedback.aplicacaocliente.R;
-import clientefeedback.aplicacaocliente.Services.Url;
-import clientefeedback.aplicacaocliente.Services.WebService;
 
 public class CadastrarEmpresaActivity extends AppCompatActivity {
 

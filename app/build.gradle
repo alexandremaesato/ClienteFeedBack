@@ -1,16 +1,17 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 15
+    compileSdkVersion 23
     buildToolsVersion '23.0.2'
 //    useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "clientefeedback.aplicacaocliente"
         minSdkVersion 15
-        targetSdkVersion 15
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -26,4 +27,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'com.android.support:design:23.2.0'
+    compile 'com.google.android.gms:play-services:8.4.0'
+    compile project(':volley')
 }

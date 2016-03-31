@@ -1,10 +1,12 @@
 <resources>
+    <string name="google_app_id">620761870214</string>
     <string name="app_name">AplicacaoCliente</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_cadastrar">Cadastrar</string>
 
     <!-- Tela Login-->
     <string name="title_login">Login</string>
+    <string name="btn_register">Cadastrar</string>
     <string name="lbl_email">Email</string>
     <string name="lbl_password">Senha</string>
     <string name="lbl_forgot_password">Esqueceu a senha?</string>
@@ -32,5 +34,31 @@
     <string name="SharedPreferences">SharedPreferences</string>
     <string name="login">login</string>
     <string name="senha">senha</string>
+    <string name="title_activity_logindemo">Sign in</string>
 
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">Email inválido</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="title_activity_cadastrar_autenticacao">CadastrarAutenticacao</string>
+    <string name="btn_save">Salvar</string>
+    <string name="lbl_cancel">Cancelar</string>
+    <string name="title_activity_google_connect">GoogleConnectActivity</string>
+    <string name="serverClientId">253732980124-vjp5k1mbfjp26f48fn91u8du70aqp2ba.apps.googleusercontent.com</string>
+
+    <!--Menus-->
+    <string name="action_logout">Deslogar</string>
+    <string name="name">nome</string>
+    <string name="email">email</string>
+    <string name="password">password</string>
+    <string name="photo">foto</string>
+    <string name="id">id</string>
 </resources>

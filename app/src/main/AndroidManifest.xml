@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="clientefeedback.aplicacaocliente">
 
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -11,8 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:allowBackup="true"
             android:name=".MainActivity"
+            android:allowBackup="true"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -26,6 +27,10 @@
         <activity
             android:name=".Helpers.DialogFragmentActivity"
             android:label="@string/title_activity_dialog_fragment"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Login.CadastrarAutenticacao"
+            android:label="@string/title_activity_cadastrar_autenticacao"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

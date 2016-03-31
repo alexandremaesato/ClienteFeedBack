@@ -9,17 +9,35 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.Toast;
+
+
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import clientefeedback.aplicacaocliente.Empresa.CadastrarEmpresaActivity;
 import clientefeedback.aplicacaocliente.Empresa.CadastrarEmpresaActivity;
 import clientefeedback.aplicacaocliente.Login.LoginActivity;
-import clientefeedback.aplicacaocliente.Services.WebService;
+//import clientefeedback.aplicacaocliente.Login.SignInActivity;
+import clientefeedback.aplicacaocliente.Services.Url;
+
+import static android.accounts.AccountManager.newChooseAccountIntent;
 
 public class MainActivity extends AppCompatActivity {
+    public static Context contextOfApplication;
+    public static GoogleSignInAccount account;
     Button botaoCadastrar;
     Button botaoLogin;
     Button btnLoginTeste2;
+    Button btnTesteAutorizacao;
     Context c;
-    WebService ws;
     SharedPreferences sharedPreferences;
+    RequestQueue mQueue;
+
 
 
     @Override
@@ -30,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
         botaoLogin = (Button)findViewById(R.id.buttonLogin);
         btnLoginTeste2 = (Button) findViewById(R.id.btnLoginTeste2);
         c = this;
+        contextOfApplication = this;
+        mQueue = Volley.newRequestQueue(getApplicationContext());
 
         Context context = this;
         sharedPreferences = getSharedPreferences(getString(R.string.SharedPreferences), Context.MODE_PRIVATE);
@@ -39,8 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                intent = new Intent(c,CadastrarEmpresaActivity.class);
-
+                intent = new Intent(c, CadastrarEmpresaActivity.class);
                 startActivity(intent);
             }
         });
@@ -55,13 +74,50 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnLoginTeste2.setOnClickListener(new View.OnClickListener() {
+            Intent intent;
 
             @Override
             public void onClick(View v) {
 
-                ws.doPost("Services/teste", "");
             }
         });
+
+//        btnTesteAutorizacao.setOnClickListener(new View.OnClickListener() {
+//            Intent intent;
+//
+//            @Override
+//            public void onClick(View v) {
+//
+//                String url = Url.getUrl()+"secured/message";
+//
+////                JsonObjectRequest jsonRequet = new AutorizacaoRequest(Request.Method.GET, url,
+////                        null, new Response.Listener<JSONObject>() {
+////
+////                    public void onResponse(JSONObject result) {
+////                        try {
+////                            int code = parseJson(result);
+////                            if (code != 200) {
+////                                Toast.makeText(MainActivity.this, "Sem codigo 200", Toast.LENGTH_SHORT).show();
+////                            }
+////                        } catch (JSONException e) {
+////                            e.printStackTrace();
+////                            Toast.makeText(MainActivity.this, "Erro de Json", Toast.LENGTH_SHORT).show();
+////                        }
+////                    }
+////                }, new Response.ErrorListener() {
+////                    public void onErrorResponse(VolleyError error) {
+////                        Toast.makeText(MainActivity.this, "Erro de conexao", Toast.LENGTH_SHORT).show();
+////                    }
+////                });
+//                //jsonRequet.setTag(TAG);
+//
+//                // mQueue.add(jsonRequet);
+//
+//
+////                intent = new Intent(c, SignInActivity.class);
+////                startActivity(intent);
+//            }
+//        });
     }
 
     @Override
@@ -82,12 +138,48 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+//        if (id == R.id.action_logout) {
+//            Intent intent = new Intent(getBaseContext(), SignInActivity.class);
+//            Bundle b = new Bundle();
+//            b.putBoolean("logout",true);
+//            intent.putExtras(b);
+//            startActivity(intent);
+//
+//        }
 
         return super.onOptionsItemSelected(item);
     }
 
 
 
+    private void updateUI(boolean signedIn) {
+        if (signedIn) {
+//            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+//            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
+        } else {
+            //mStatusTextView.setText("Deslogado");
+
+//            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+//            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
+        }
+    }
+
+    private void toast(int id) {
+        String text = getResources().getString(id);
+        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
+    }
+
+    private int parseJson(JSONObject root) throws JSONException {
+        boolean useNetworkImageView = true;
+        int code = root.getJSONObject("meta").getInt("code");
+        if (code == 200) {
+            Toast.makeText(MainActivity.this, "JSON", Toast.LENGTH_SHORT).show();
+        }
+        return code;
+    }
 
 
+    public static Context contextOfApplication() {
+        return contextOfApplication;
+    }
 }

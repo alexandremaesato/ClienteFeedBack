@@ -1,6 +1,6 @@
 package clientefeedback.aplicacaocliente.Services;
 
-import org.apache.http.HttpRequest;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
