@@ -17,24 +17,37 @@
     <string name="password_required">Senha Obrigatório</string>
     <string name="email_required_size_invalid">Seu email deve ter entre 4 e 15 caracteres!</string>
     <string name="password_required_size_invalid">Sua senha deve ter entre 6 e 15 caracteres!</string>
+
+    <!-- Tela Cadastrar Empresa-->
+    <string name="cadastro_empresa">Cadastro de Empresa</string>
+    <string name="nome_empresa">Nome:</string>
+    <string name="cnpj">CNPJ:</string>
     <string name="endereco">Endereço da Empresa</string>
     <string name="rua">Rua:</string>
     <string name="numero_casa">Número:</string>
+    <string name="complemento">Complemento:</string>
     <string name="bairro">Bairro:</string>
     <string name="cep">CEP:</string>
     <string name="cidade">Cidade:</string>
     <string name="estado">Estado:</string>
     <string name="pais">País:</string>
-    <string name="descricao_empresa">Descrição da Empresa:</string>
+    <string name="descricao_empresa">Descrição:</string>
     <string name="telefones_contato">Telefones de Contato da Empresa</string>
-    <string name="telefone_tipo">Tipo do Telefone:</string>
-    <string name="telefone_numero">Número do Telefone:</string>
+    <string name="telefone_tipo">Tipo:</string>
+    <string name="telefone_numero">Número:</string>
+    <string name="add_imagem_perfil">Imagem de Perfil</string>
+    <string name="add_imagem">Adicione uma Imagem ao Perfil da Empresa</string>
+    <string name="add_imagem_galeria">Escolha da galeria</string>
+    <string name="add_imagem_camera">Use a Camera</string>
+    <string name="add_imagem_cancel">Cancelar</string>
+    <string name="select_file">Selecione um Arquivo</string>
 
     <!-- Valores de Dados Compartilhados -->
     <string name="SharedPreferences">SharedPreferences</string>
     <string name="login">login</string>
     <string name="senha">senha</string>
     <string name="title_activity_logindemo">Sign in</string>
+    <string name="save">Salvar</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>

@@ -16,8 +16,8 @@ public class Empresa {
     private List<Imagem> imagensOficiais;
     //private List<Comentario> comentarios;
     //private List<Avaliacao> avaliacoes;
-    //private List<Telefone> telefones;
-    //private Endereco endereco;
+    private List<Telefone> telefones;
+    private Endereco endereco;
     //private List<Produto> produtos;
     private List avaliacaoNota;
     private int qtdeComentarios;
@@ -94,23 +94,23 @@ public class Empresa {
 //    public void setAvaliacoes(List<Avaliacao> avaliacoes) {
 //        this.avaliacoes = avaliacoes;
 //    }
-//
-//    public List<Telefone> getTelefones() {
-//        return telefones;
-//    }
-//
-//    public void setTelefones(List<Telefone> telefones) {
-//        this.telefones = telefones;
-//    }
-//
-//    public Endereco getEndereco() {
-//        return endereco;
-//    }
-//
-//    public void setEndereco(Endereco endereco) {
-//        this.endereco = endereco;
-//    }
-//
+
+    public List<Telefone> getTelefones() {
+        return telefones;
+    }
+
+    public void setTelefones(List<Telefone> telefones) {
+        this.telefones = telefones;
+    }
+
+    public Endereco getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(Endereco endereco) {
+        this.endereco = endereco;
+    }
+
 //    public List<Produto> getProdutos() {
 //        return produtos;
 //    }
