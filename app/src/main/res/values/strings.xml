@@ -41,6 +41,14 @@
     <string name="add_imagem_camera">Use a Camera</string>
     <string name="add_imagem_cancel">Cancelar</string>
     <string name="select_file">Selecione um Arquivo</string>
+    <string name="nome_obrigatorio">Nome é Obrigatório</string>
+    <string name="dscr_obrigatorio">Descrição é Obrigatória</string>
+    <string name="rua_obrigatorio">Rua é Obrigatório</string>
+    <string name="numero_local_obrigatorio">Numero é Obrigatório</string>
+    <string name="bairro_obrigatorio">Bairro é Obrigatório</string>
+    <string name="cidade_obrigatorio">Cidade é Obrigatório</string>
+    <string name="estado_obrigatorio">Estado é Obrigatório</string>
+    <string name="pais_obrigatorio">País é Obrigatório</string>
 
     <!-- Valores de Dados Compartilhados -->
     <string name="SharedPreferences">SharedPreferences</string>
