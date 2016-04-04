@@ -3,6 +3,7 @@ package clientefeedback.aplicacaocliente.Empresa;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,6 +17,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,10 +28,16 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -38,8 +47,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import clientefeedback.aplicacaocliente.MainActivity;
 import clientefeedback.aplicacaocliente.Models.Empresa;
 import clientefeedback.aplicacaocliente.Models.Endereco;
+import clientefeedback.aplicacaocliente.Models.Mask;
 import clientefeedback.aplicacaocliente.Models.Telefone;
 import clientefeedback.aplicacaocliente.R;
 
@@ -48,12 +59,14 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
     private int REQUEST_CAMERA  = 1;
     private int SELECT_FILE     = 2;
     private List<EditText> allEdsTelefone = new ArrayList<>();
+    private RequestQueue rq;
+    private Resources resources;
 
     EditText nome;
     EditText cnpj;
     EditText descricao;
     //    Button botao;
-//    ProgressBar spinner;
+    ProgressBar spinner;
     EditText cep;
     EditText rua;
     EditText numero;
@@ -78,6 +91,9 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
         setSupportActionBar(cetoolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        rq = Volley.newRequestQueue(CadastrarEmpresaActivity.this);
+        resources = getResources();
+
         nome           = (EditText)findViewById(R.id.editTextNomeEmpresa);
         cnpj           = (EditText)findViewById(R.id.editTextCnpj);
         descricao      = (EditText)findViewById(R.id.editTextDescricaoEmpresa);
@@ -94,8 +110,17 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
         bt_AddTelefone = (ImageButton) findViewById(R.id.bt_AddTelefone);
         ivImage        = (ImageView) findViewById(R.id.ivImage);
 
-//        spinner.setVisibility(View.GONE);
-//
+        // Masks
+            TextWatcher cnpjMask = Mask.insert("##.###.###/####-##", cnpj);
+            cnpj.addTextChangedListener(cnpjMask);
+
+            TextWatcher cepMask = Mask.insert("#####-###", cep);
+            cep.addTextChangedListener(cepMask);
+
+            TextWatcher telefoneMask = Mask.insert("(##)#####-####", numeroTelefone);
+            numeroTelefone.addTextChangedListener(telefoneMask);
+
+
         cetoolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -103,126 +128,60 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
                 switch( item.getItemId() ) {
                     case R.id.action_save:
 
+                        if( validateFields() ) {
 
-                        new Thread() {
-                            public void run() {
+                            new Thread() {
+                                public void run() {
 
-                                Empresa emp = new Empresa();
-                                emp.setNomeEmpresa(nome.getText().toString());
-                                emp.setCnpj(cnpj.getText().toString());
-                                emp.setDescricao(descricao.getText().toString());
+                                    Empresa emp = new Empresa();
+                                    emp.setNomeEmpresa(nome.getText().toString());
+                                    emp.setCnpj(cnpj.getText().toString());
+                                    emp.setDescricao(descricao.getText().toString());
 
-                                Endereco endereco = new Endereco(
-                                        rua.getText().toString(),
-                                        numero.getText().toString(),
-                                        complemento.getText().toString(),
-                                        bairro.getText().toString(),
-                                        cep.getText().toString(),
-                                        cidade.getText().toString(),
-                                        estado.getText().toString(),
-                                        pais.getText().toString()
-                                );
-                                emp.setEndereco(endereco);
+                                    Endereco endereco = new Endereco(
+                                            rua.getText().toString(),
+                                            numero.getText().toString(),
+                                            complemento.getText().toString(),
+                                            bairro.getText().toString(),
+                                            cep.getText().toString(),
+                                            cidade.getText().toString(),
+                                            estado.getText().toString(),
+                                            pais.getText().toString()
+                                    );
+                                    emp.setEndereco(endereco);
 
-                                List<Telefone> telefones = new ArrayList<Telefone>();
-                                Telefone telefone = new Telefone(
-                                        tipoTelefone.getText().toString(),
-                                        numeroTelefone.getText().toString()
-                                );
+                                    List<Telefone> telefones = new ArrayList<Telefone>();
+                                    Telefone telefone = new Telefone(
+                                            tipoTelefone.getText().toString(),
+                                            numeroTelefone.getText().toString()
+                                    );
 
+                                    telefones.add(telefone);
 
-                                telefones.add(telefone);
+                                    if (allEdsTelefone.size() > 0) {
+                                        int i = 0;
 
-                                if( allEdsTelefone.size() > 0 ){
-                                    int i = 0;
+                                        while (i < allEdsTelefone.size()) {
 
-                                    while( i < allEdsTelefone.size() ){
+                                            Telefone tel = new Telefone(
+                                                    allEdsTelefone.get(i).getText().toString(),
+                                                    allEdsTelefone.get(i + 1).getText().toString()
+                                            );
+                                            telefones.add(tel);
 
-                                        Telefone tel = new Telefone(
-                                                allEdsTelefone.get(i).getText().toString(),
-                                                allEdsTelefone.get(i+1).getText().toString()
-                                        );
-                                        telefones.add(tel);
-
-                                        i += 2;
+                                            i += 2;
+                                        }
                                     }
+
+                                    emp.setTelefones(telefones);
                                 }
-
-                                emp.setTelefones(telefones);
-
-                            }
-                        }.start();
+                            }.start();
+                        }
 
                         break;
                 }
                 return false;
             }
-
-//            public void onClick(View v) {
-//                spinner.setVisibility(View.VISIBLE);
-//
-//                new Thread() {
-//                    public void run() {
-//
-//                        WebService ws = new WebService(Url.cadastrarEmpresaUrl());
-//                        Map params = new HashMap();
-//
-//                        Empresa emp = new Empresa();
-//                        emp.setNomeEmpresa(nome.getText().toString());
-//                        emp.setCnpj(cnpj.getText().toString());
-//                        emp.setDescricao(descricao.getText().toString());
-
-            //Pegar do Banco de Dados do Android
-//                        Pessoa pessoa =  new Pessoa();
-//                        pessoa.setNome("Nome de Teste");
-//                        pessoa.setPessoaid(1);
-//
-//                        Gson g = new Gson();
-//
-//                        params.put("empresa", emp);
-//                        params.put("pessoa", pessoa);
-//                        String teste = g.toJson(params);
-//
-//                        try{
-//                            String response = ws.doPost("cadastrarEmpresa", teste );
-//                            System.out.println("Resultado: "+response);
-//                    String response = ws.webGet("pegarEmpresas", params);
-            //JSONObject json = new JSONObject(response);
-//
-//                    JSONObject jsonUsuario = new JSONObject(json.getString("usuario")); //Pega o Json e faz um load apenas dos dados do Usuario em um novo Json
-//                    Usuario u = new Usuario();
-//                    u.jsonToUsuario(jsonUsuario); //Converte o json em usuario
-//                    Bundle b = new Bundle();
-//                    //final ProgressDialog mprogressDialog = ProgressDialog.show(MainActivity.this, "Aguarde", "Processando...");
-//                    if(u != null){
-//                        b.putString("id", String.valueOf(u.getIdUsuario()));
-//                        b.putString("nome", u.getNome());
-//                    }else {
-//                        b.putString("message", "Algo deu errado!!!");
-//                    }
-//                    Message msg = new Message();
-//                    do {
-//                        String res = response;
-//                        Bundle b = new Bundle();
-//                        b.putString("msg", response);
-//
-//                        msg.setData(b);
-//                    }while(response == null);
-//
-//                   handler.sendMessage(msg);
-            // handler.sendMessageAtTime(msg,3000);
-//
-//
-//                        }catch (Exception e) {
-//                            Message msg = new Message();
-//                            Bundle b= new Bundle();
-//                            b.putString("msg", "erro");
-//                            msg.setData(b);
-//                            handler.sendMessage(msg);
-//                        }
-//                    }
-//                }.start();
-//            }
         });
 
         bt_AddTelefone.setOnClickListener(new View.OnClickListener() {
@@ -291,6 +250,61 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
         }
     };
 
+    private boolean validateFields() {
+
+        String sNome           = nome.getText().toString().trim();
+        String sDescricao      = descricao.getText().toString().trim();
+        String sRua            = rua.getText().toString().trim();
+        String sNumero         = numero.getText().toString().trim();
+        String sBairro         = bairro.getText().toString().trim();
+        String sCidade         = cidade.getText().toString().trim();
+        String sEstado         = estado.getText().toString().trim();
+        String sPais           = pais.getText().toString().trim();
+
+        return ( !isEmptyFields(
+                    sNome, sDescricao, sRua, sNumero,
+                    sBairro, sCidade, sEstado, sPais
+            ));
+    }
+
+    private boolean isEmptyFields(String sNome, String sDescricao, String sRua, String sNumero,
+                                      String sBairro, String sCidade, String sEstado, String sPais) {
+
+        if (TextUtils.isEmpty(sNome)) {
+            nome.requestFocus();
+            nome.setError(resources.getString( R.string.nome_obrigatorio ));
+            return true;
+        } else if (TextUtils.isEmpty(sRua)) {
+            rua.requestFocus();
+            rua.setError(resources.getString(R.string.rua_obrigatorio));
+            return true;
+        } else if (TextUtils.isEmpty(sNumero)) {
+            numero.requestFocus();
+            numero.setError(resources.getString(R.string.numero_local_obrigatorio));
+            return true;
+        } else if (TextUtils.isEmpty(sBairro)) {
+            bairro.requestFocus();
+            bairro.setError(resources.getString(R.string.bairro_obrigatorio));
+            return true;
+        } else if (TextUtils.isEmpty(sCidade)) {
+            cidade.requestFocus();
+            cidade.setError(resources.getString(R.string.cidade_obrigatorio));
+            return true;
+        } else if (TextUtils.isEmpty(sEstado)) {
+            estado.requestFocus();
+            estado.setError(resources.getString(R.string.estado_obrigatorio));
+            return true;
+        } else if (TextUtils.isEmpty(sPais)) {
+            pais.requestFocus();
+            pais.setError(resources.getString(R.string.pais_obrigatorio));
+            return true;
+        } else if (TextUtils.isEmpty(sDescricao)) {
+            descricao.requestFocus();
+            descricao.setError(resources.getString(R.string.dscr_obrigatorio));
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -345,6 +359,7 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
         editTextTipoTel.setLayoutParams(editTextParams);
         editTextTipoTel.setBackgroundResource(R.drawable.border_fields);
         editTextTipoTel.setPadding(0,0,0,0);
+        editTextTipoTel.setSingleLine(true);
         editTextTipoTel.requestFocus();
 
         // ADD
@@ -380,7 +395,10 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
         editText2Params.weight  = 1;
         editTextNumeroTel.setLayoutParams(editText2Params);
         editTextNumeroTel.setBackgroundResource(R.drawable.border_fields);
-        editTextNumeroTel.setPadding(0,0,0,0);
+        editTextNumeroTel.setPadding(0, 0, 0, 0);
+        editTextNumeroTel.setSingleLine(true);
+        TextWatcher telefoneMask = Mask.insert("(##)#####-####", editTextNumeroTel);
+        editTextNumeroTel.addTextChangedListener(telefoneMask);
 
         // ADD
         allEdsTelefone.add(editTextNumeroTel);
