@@ -198,10 +198,12 @@ public class MainActivity extends AppCompatActivity
                                 String novaSenha = senha.getText().toString();
                                 SharedPreferences.Editor editor = sharedPreferences.edit();
                                 editor.putString(getString(R.string.login), novoLogin);
+
+                                novaSenha = Base64.encodeToString( //Criptografa apenas a senha
+                                        (novaSenha).getBytes(),
+                                        Base64.NO_WRAP);
+                                
                                 editor.putString(getString(R.string.password), novaSenha);
-//                                novaSenha = Base64.encodeToString( //Criptografa apenas a senha
-//                                        (novaSenha).getBytes(),
-//                                        Base64.NO_WRAP);
                                 editor.commit();
                                 doRequest();
 

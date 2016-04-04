@@ -38,7 +38,7 @@ public class AutenticacaoHeaders {
         Map<String, String> headerMap = new HashMap<String, String>();
         String credentials = username + ":" + password;
         String encodedCredentials = Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-        headerMap.put("Register", "Basic " + encodedCredentials);
+        headerMap.put("Autentication", "Basic " + encodedCredentials);
         return headerMap;
     }
 }
