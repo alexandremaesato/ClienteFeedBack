@@ -3,6 +3,7 @@ package clientefeedback.aplicacaocliente.Services;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Base64;
+import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +29,8 @@ public class AutenticacaoHeaders {
         senha = Base64.encodeToString( //Criptografa apenas a senha
                 (senha).getBytes(),
                 Base64.NO_WRAP);
-
+        System.out.println("Senha Criptografada: " + senha);
+        Log.e("Senha Criptografada: " , senha);
         return createBasicAuthHeader(usuario, senha);
     }
 

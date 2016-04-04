@@ -199,9 +199,9 @@ public class MainActivity extends AppCompatActivity
                                 SharedPreferences.Editor editor = sharedPreferences.edit();
                                 editor.putString(getString(R.string.login), novoLogin);
                                 editor.putString(getString(R.string.password), novaSenha);
-                                novaSenha = Base64.encodeToString( //Criptografa apenas a senha
-                                        (novaSenha).getBytes(),
-                                        Base64.NO_WRAP);
+//                                novaSenha = Base64.encodeToString( //Criptografa apenas a senha
+//                                        (novaSenha).getBytes(),
+//                                        Base64.NO_WRAP);
                                 editor.commit();
                                 doRequest();
 
@@ -301,6 +301,12 @@ public class MainActivity extends AppCompatActivity
                         progressBar.setVisibility(View.GONE);
                         if("Accepted".equals(result)){
                             Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                            String novoLogin = email.getText().toString();
+                            String novaSenha = senha.getText().toString();
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString(getString(R.string.login), novoLogin);
+                            editor.putString(getString(R.string.password), novaSenha);
+                            editor.commit();
                             startActivity(intent);
                         }
                     }
