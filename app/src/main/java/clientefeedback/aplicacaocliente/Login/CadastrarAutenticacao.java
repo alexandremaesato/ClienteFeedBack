@@ -198,33 +198,33 @@ public class CadastrarAutenticacao extends AppCompatActivity {
     }
 
     private void doRequest(){
-        String url = Url.getUrl()+"secured/message";
-
-        StringRequest jsonRequet = new CadastrarAutenticacaoRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-
-                    public void onResponse(String result) {
-                        spinner.setVisibility(View.GONE);
-                        //Toast.makeText(CadastrarAutenticacao.this, result.toString(), Toast.LENGTH_SHORT).show();
-                        if("Accepted".equals(result)){
-                            Intent intent = new Intent(c, MainActivity.class);
-                            startActivity(intent);
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            public void onErrorResponse(VolleyError error) {
-                spinner.setVisibility(View.GONE);
-                if (error.networkResponse != null) {
-                    if (error.networkResponse.statusCode == 401) {
-                        Toast.makeText(CadastrarAutenticacao.this, "Usuario já está cadastrado", Toast.LENGTH_SHORT).show();
-                    }
-                }else {
-                    Toast.makeText(CadastrarAutenticacao.this, "Erro de conexao", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        jsonRequet.setTag(TAG);
-
-        mQueue.add(jsonRequet);
+//        String url = Url.getUrl()+"secured/message";
+//
+//        StringRequest jsonRequet = new CadastrarAutenticacaoRequest(Request.Method.GET, url,
+//                new Response.Listener<String>() {
+//
+//                    public void onResponse(String result) {
+//                        spinner.setVisibility(View.GONE);
+//                        //Toast.makeText(CadastrarAutenticacao.this, result.toString(), Toast.LENGTH_SHORT).show();
+//                        if("Accepted".equals(result)){
+//                            Intent intent = new Intent(c, MainActivity.class);
+//                            startActivity(intent);
+//                        }
+//                    }
+//                }, new Response.ErrorListener() {
+//            public void onErrorResponse(VolleyError error) {
+//                spinner.setVisibility(View.GONE);
+//                if (error.networkResponse != null) {
+//                    if (error.networkResponse.statusCode == 401) {
+//                        Toast.makeText(CadastrarAutenticacao.this, "Usuario já está cadastrado", Toast.LENGTH_SHORT).show();
+//                    }
+//                }else {
+//                    Toast.makeText(CadastrarAutenticacao.this, "Erro de conexao", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+//        jsonRequet.setTag(TAG);
+//
+//        mQueue.add(jsonRequet);
     }
 }

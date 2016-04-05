@@ -34,11 +34,34 @@ public class AutenticacaoHeaders {
         return createBasicAuthHeader(usuario, senha);
     }
 
+    public static Map<String,String> basicRegister(String login, String senha){
+
+        SharedPreferences prefs = c.getSharedPreferences("account", Context.MODE_PRIVATE);
+        prefs.getString(c.getString(R.string.id), "");
+        login = prefs.getString(c.getString(R.string.login), "");
+        senha = prefs.getString(c.getString(R.string.password), "");
+
+        senha = Base64.encodeToString( //Criptografa apenas a senha
+                (senha).getBytes(),
+                Base64.NO_WRAP);
+        System.out.println("Senha Criptografada: " + senha);
+        Log.e("Senha Criptografada: " , senha);
+        return createBasicRegisterHeader(login, senha);
+    }
+
     private static Map<String, String> createBasicAuthHeader(String username, String password) {
         Map<String, String> headerMap = new HashMap<String, String>();
         String credentials = username + ":" + password;
         String encodedCredentials = Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
         headerMap.put("Autentication", "Basic " + encodedCredentials);
+        return headerMap;
+    }
+
+    private static Map<String, String> createBasicRegisterHeader(String username, String password) {
+        Map<String, String> headerMap = new HashMap<String, String>();
+        String credentials = username + ":" + password;
+        String encodedCredentials = Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        headerMap.put("Register", "Basic " + encodedCredentials);
         return headerMap;
     }
 }

@@ -13,18 +13,11 @@
 
     <LinearLayout
         android:id="@+id/headerLogado"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:layout_marginLeft="10dp">
-
-        <ImageView
-            android:id="@+id/userImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/nav_header_vertical_spacing"
-            android:src="@android:drawable/sym_def_app_icon" />
 
         <TextView
             android:id="@+id/userEmail"
@@ -32,6 +25,15 @@
             android:layout_height="wrap_content"
             android:text="android.studio@android.com"
             android:layout_marginLeft="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Sair"
+            android:id="@+id/txtSair"
+            android:clickable="true"
+            android:layout_gravity="right" />
 
     </LinearLayout>
 

@@ -40,6 +40,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import clientefeedback.aplicacaocliente.Services.AutorizacaoRequest;
+import clientefeedback.aplicacaocliente.Services.CadastrarAutenticacaoRequest;
 import clientefeedback.aplicacaocliente.Services.Url;
 
 public class MainActivity extends AppCompatActivity
@@ -64,9 +65,8 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         mFragment = MainFragment.newInstance("MAIN");
         mFragmentManager.beginTransaction().replace(R.id.conteudo, mFragment).commit();
-        sharedPreferences = getSharedPreferences(getString(R.string.SharedPreferences), Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("account", Context.MODE_PRIVATE);
         mQueue = Volley.newRequestQueue(getApplicationContext());
-
 
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -166,25 +166,25 @@ public class MainActivity extends AppCompatActivity
         return contextOfApplication;
     }
 
-    public String getUser(){
+    public String getUser() {
         return sharedPreferences.getString(getString(R.string.login), "");
     }
 
     public void navigationViewInit() {
 
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(getString(R.string.login), "");
-        editor.commit();
+//        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        editor.putString(getString(R.string.login), "");
+//        editor.commit();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View header = navigationView.getHeaderView(0);
         initButtonsHeader(header);
-        progressBar = (ProgressBar)header.findViewById(R.id.progressBarLogin);
+        progressBar = (ProgressBar) header.findViewById(R.id.progressBarLogin);
         progressBar.setVisibility(View.GONE);
-        email = (EditText)header.findViewById(R.id.editEmail);
-        senha = (EditText)header.findViewById(R.id.editPassword);
-        Button btnLogar = (Button)header.findViewById(R.id.btnLogin);
+        email = (EditText) header.findViewById(R.id.editEmail);
+        senha = (EditText) header.findViewById(R.id.editPassword);
+        Button btnLogar = (Button) header.findViewById(R.id.btnLogin);
 
         btnLogar.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -198,11 +198,6 @@ public class MainActivity extends AppCompatActivity
                                 String novaSenha = senha.getText().toString();
                                 SharedPreferences.Editor editor = sharedPreferences.edit();
                                 editor.putString(getString(R.string.login), novoLogin);
-
-                                novaSenha = Base64.encodeToString( //Criptografa apenas a senha
-                                        (novaSenha).getBytes(),
-                                        Base64.NO_WRAP);
-                                
                                 editor.putString(getString(R.string.password), novaSenha);
                                 editor.commit();
                                 doRequest();
@@ -217,6 +212,42 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        Button btnCadastrar = (Button) header.findViewById(R.id.btnCadastrar);
+        btnCadastrar.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (validateFields()) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    new Thread() {
+                        public void run() {
+
+                            try {
+                                String novoLogin = email.getText().toString();
+                                String novaSenha = senha.getText().toString();
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString(getString(R.string.login), novoLogin);
+                                editor.putString(getString(R.string.password), novaSenha);
+                                editor.commit();
+                                doRequestCadastrar(novoLogin, novaSenha);
+
+                            } catch (Exception e) {
+
+                            }
+                        }
+                    }.start();
+                }
+
+            }
+        });
+
+        TextView textSair = (TextView) header.findViewById(R.id.txtSair);
+        textSair.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                cleanSharedPreferences();
+                finish();
+                startActivity(getIntent());
+
+            }
+        });
 
 
         ViewGroup.LayoutParams params = header.getLayoutParams();
@@ -225,17 +256,17 @@ public class MainActivity extends AppCompatActivity
 
         String user = getUser();
 
-        LinearLayout logado = (LinearLayout)header.findViewById(R.id.headerLogado);
-        LinearLayout naoLogado = (LinearLayout)header.findViewById(R.id.headerNaoLogado);
+        LinearLayout logado = (LinearLayout) header.findViewById(R.id.headerLogado);
+        LinearLayout naoLogado = (LinearLayout) header.findViewById(R.id.headerNaoLogado);
 
         TextView email = (TextView) header.findViewById(R.id.userEmail);
-        ImageView image = (ImageView) header.findViewById(R.id.userImage);
+        //ImageView image = (ImageView) header.findViewById(R.id.userImage);
 
 
         logado.setVisibility(View.GONE);
         naoLogado.setVisibility(View.VISIBLE);
 
-        if( user != "") {
+        if (user != "") {
             params.height = 300;
             header.setLayoutParams(params);
             logado.setVisibility(View.VISIBLE);
@@ -244,9 +275,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void initButtonsHeader(View view){
-
-
+    public void initButtonsHeader(View view) {
 
 
     }
@@ -293,23 +322,23 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void doRequest(){
-        String url = Url.getUrl()+"secured/message";
+    private void doRequest() {
+        String url = Url.getUrl() + "secured/message";
 
         StringRequest jsonRequet = new AutorizacaoRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
 
                     public void onResponse(String result) {
                         progressBar.setVisibility(View.GONE);
-                        if("Accepted".equals(result)){
-                            Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                        if ("Accepted".equals(result)) {
                             String novoLogin = email.getText().toString();
                             String novaSenha = senha.getText().toString();
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putString(getString(R.string.login), novoLogin);
                             editor.putString(getString(R.string.password), novaSenha);
                             editor.commit();
-                            startActivity(intent);
+                            finish();
+                            startActivity(getIntent());
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -319,12 +348,50 @@ public class MainActivity extends AppCompatActivity
                     if (error.networkResponse.statusCode == 401) {
                         Toast.makeText(getApplicationContext(), "Senha ou Usuário incorreto", Toast.LENGTH_SHORT).show();
                     }
-                }else {
+                } else {
                     Toast.makeText(getApplicationContext(), "Erro de conexao", Toast.LENGTH_SHORT).show();
                 }
             }
         });
         jsonRequet.setTag(TAG);
         mQueue.add(jsonRequet);
+    }
+
+    private void doRequestCadastrar(String login, String senha){
+        String url = Url.getUrl()+"secured/message";
+
+        StringRequest jsonRequet = new CadastrarAutenticacaoRequest(login, senha, Request.Method.GET, url,
+                new Response.Listener<String>() {
+
+                    public void onResponse(String result) {
+                        progressBar.setVisibility(View.GONE);
+                        if("Accepted".equals(result)){
+                            Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                            startActivity(intent);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.GONE);
+                if (error.networkResponse != null) {
+                    if (error.networkResponse.statusCode == 401) {
+                        cleanSharedPreferences();
+                        Toast.makeText(getBaseContext(), "Usuario já está cadastrado", Toast.LENGTH_SHORT).show();
+                    }
+                }else {
+                    cleanSharedPreferences();
+                    Toast.makeText(getBaseContext(), "Erro de conexao", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        jsonRequet.setTag(TAG);
+
+        mQueue.add(jsonRequet);
+    }
+
+    private void cleanSharedPreferences(){
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(getString(R.string.login), "");
+        editor.commit();
     }
 }
