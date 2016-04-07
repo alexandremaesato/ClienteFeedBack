@@ -1,8 +1,10 @@
 package clientefeedback.aplicacaocliente.Empresa;
 
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -35,9 +37,16 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -45,14 +54,21 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import clientefeedback.aplicacaocliente.MainActivity;
+import clientefeedback.aplicacaocliente.Models.CustomRequest;
 import clientefeedback.aplicacaocliente.Models.Empresa;
 import clientefeedback.aplicacaocliente.Models.Endereco;
+import clientefeedback.aplicacaocliente.Models.Imagem;
 import clientefeedback.aplicacaocliente.Models.Mask;
+import clientefeedback.aplicacaocliente.Models.Pessoa;
 import clientefeedback.aplicacaocliente.Models.Telefone;
 import clientefeedback.aplicacaocliente.R;
+import clientefeedback.aplicacaocliente.Services.AutorizacaoRequest;
+import clientefeedback.aplicacaocliente.Services.Url;
 
 public class CadastrarEmpresaActivity extends AppCompatActivity {
 
@@ -61,11 +77,16 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
     private List<EditText> allEdsTelefone = new ArrayList<>();
     private RequestQueue rq;
     private Resources resources;
+    SharedPreferences prefs;
+    private static final Object TAG = new Object();
+    String usuario;
+    String senha;
+    Gson gson;
+    Imagem img = new Imagem();
 
     EditText nome;
     EditText cnpj;
     EditText descricao;
-    //    Button botao;
     ProgressBar spinner;
     EditText cep;
     EditText rua;
@@ -86,13 +107,24 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastrar_empresa);
 
+        rq = Volley.newRequestQueue(CadastrarEmpresaActivity.this);
+        prefs = getSharedPreferences("account", Context.MODE_PRIVATE);
+        prefs.getString(this.getString(R.string.id), "");
+        usuario = prefs.getString(this.getString(R.string.login), "");
+        senha = prefs.getString(this.getString(R.string.password), "");
+        gson = new Gson();
+
+        initViews();
+    }
+
+    private void initViews(){
+
         Toolbar cetoolbar = (Toolbar) findViewById(R.id.cetoolbar);
         setTitle(R.string.cadastro_empresa);
         setSupportActionBar(cetoolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        rq = Volley.newRequestQueue(CadastrarEmpresaActivity.this);
-        resources = getResources();
+        resources      = getResources();
 
         nome           = (EditText)findViewById(R.id.editTextNomeEmpresa);
         cnpj           = (EditText)findViewById(R.id.editTextCnpj);
@@ -111,16 +143,17 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
         ivImage        = (ImageView) findViewById(R.id.ivImage);
 
         // Masks
-            TextWatcher cnpjMask = Mask.insert("##.###.###/####-##", cnpj);
-            cnpj.addTextChangedListener(cnpjMask);
+        TextWatcher cnpjMask = Mask.insert("##.###.###/####-##", cnpj);
+        cnpj.addTextChangedListener(cnpjMask);
 
-            TextWatcher cepMask = Mask.insert("#####-###", cep);
-            cep.addTextChangedListener(cepMask);
+        TextWatcher cepMask = Mask.insert("#####-###", cep);
+        cep.addTextChangedListener(cepMask);
 
-            TextWatcher telefoneMask = Mask.insert("(##)#####-####", numeroTelefone);
-            numeroTelefone.addTextChangedListener(telefoneMask);
+        TextWatcher telefoneMask = Mask.insert("(##)#####-####", numeroTelefone);
+        numeroTelefone.addTextChangedListener(telefoneMask);
 
 
+        assert cetoolbar != null;
         cetoolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -174,6 +207,20 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
                                     }
 
                                     emp.setTelefones(telefones);
+
+                                    img.setTipoImagem(1); // Temporario
+                                    emp.setImagemPerfil(img);
+
+                                    Pessoa pessoa = new Pessoa();
+                                    pessoa.setLogin(usuario);
+                                    pessoa.setSenha(senha);
+
+                                    HashMap<String, String> params = new HashMap<>();
+                                    params.put("empresa", gson.toJson(emp));
+                                    params.put("pessoa", gson.toJson(pessoa));
+
+                                    doRequest(params);
+
                                 }
                             }.start();
                         }
@@ -227,28 +274,6 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
             }
         });
     }
-
-    public Handler handler = new Handler(){
-
-        @Override
-        public void handleMessage(Message msg){
-//            spinner.setVisibility(View.GONE);
-            System.out.println("MSG: "+msg);
-            Toast.makeText(CadastrarEmpresaActivity.this, msg.getData().getString("msg"), Toast.LENGTH_SHORT).show();
-
-//            if( msg != null ) {
-//                String idUsuario = msg.getData().getString("id");
-//                String nome = msg.getData().getString("nome");
-            //tostando(idUsuario);
-//                if(idUsuario != null) {
-//                    iniciaDashboard(idUsuario, nome);
-//                }else
-//                {
-//                    tostando("Usuario ou senha incorreto!");
-//                }
-            //}
-        }
-    };
 
     private boolean validateFields() {
 
@@ -418,10 +443,10 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
             if (requestCode == REQUEST_CAMERA) {
                 Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                thumbnail.compress(Bitmap.CompressFormat.PNG, 90, bytes);
+                thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
 
                 File destination = new File(Environment.getExternalStorageDirectory(),
-                        System.currentTimeMillis() + ".png");
+                        System.currentTimeMillis() + ".jpg");
 
                 FileOutputStream fo;
                 try {
@@ -436,6 +461,8 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
                 }
 
                 ivImage.setImageBitmap(thumbnail);
+                img.imageEncode(thumbnail);
+                img.setNomeImagem(destination.getPath());
 
             } else if (requestCode == SELECT_FILE) {
                 Uri selectedImageUri = data.getData();
@@ -462,7 +489,72 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
                 bm = BitmapFactory.decodeFile(selectedImagePath, options);
 
                 ivImage.setImageBitmap(bm);
+                img.imageEncode(bm);
+                img.setNomeImagem(selectedImagePath);
             }
         }
     }
+
+    private void doRequest(HashMap<String, String> params){
+        String url = Url.getUrl()+"Empresa/cadastrarEmpresa";
+
+        CustomRequest jsonRequest = new CustomRequest(
+                Request.Method.POST,
+                url,
+                params,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Toast.makeText(CadastrarEmpresaActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (error.networkResponse == null) {
+                            Toast.makeText(CadastrarEmpresaActivity.this, "Erro de conexao", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+        });
+
+        jsonRequest.setTag(TAG);
+        rq.add(jsonRequest);
+    }
+
+//    private void doRequest(HashMap<String, String> params){
+//        String url = Url.getUrl()+"Empresa/cadastrarEmpresa";
+//        final HashMap<String, String> params1 = params;
+//
+//        StringRequest jsonRequest = new AutorizacaoRequest(
+//                Request.Method.POST,
+//                url,
+//                new Response.Listener<String>() {
+//
+//                    public void onResponse(String result) {
+//                        Toast.makeText(CadastrarEmpresaActivity.this, result.toString(), Toast.LENGTH_SHORT).show();
+//
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    public void onErrorResponse(VolleyError error) {
+//                        if (error.networkResponse != null) {
+//                            if (error.networkResponse.statusCode == 401) {
+//                                Toast.makeText(CadastrarEmpresaActivity.this, "Erro de conexao", Toast.LENGTH_SHORT).show();
+//                            }
+//                        }else {
+//                            Toast.makeText(CadastrarEmpresaActivity.this, "Erro de conexao", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//        }){
+//            @Override
+//            public Map<String, String> getParams() throws AuthFailureError {
+//                return(params1);
+//            }
+//        };
+
+//        jsonRequest.setTag(TAG);
+//
+//        rq.add(jsonRequest);
+//
+//    }
 }

@@ -27,7 +27,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Empresa.CadastrarEmpresaActivity" />
+        <activity
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:name=".Empresa.CadastrarEmpresaActivity"
+            />
         <activity android:name=".Login.LoginActivity" />
         <activity
             android:name=".Helpers.DialogFragmentActivity"
