@@ -217,7 +217,7 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
 
                                     HashMap<String, String> params = new HashMap<>();
                                     params.put("empresa", gson.toJson(emp));
-                                    params.put("pessoa", gson.toJson(pessoa));
+//                                    params.put("pessoa", gson.toJson(pessoa));
 
                                     doRequest(params);
 
@@ -495,66 +495,66 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
         }
     }
 
-    private void doRequest(HashMap<String, String> params){
-        String url = Url.getUrl()+"Empresa/cadastrarEmpresa";
-
-        CustomRequest jsonRequest = new CustomRequest(
-                Request.Method.POST,
-                url,
-                params,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Toast.makeText(CadastrarEmpresaActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (error.networkResponse == null) {
-                            Toast.makeText(CadastrarEmpresaActivity.this, "Erro de conexao", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-        });
-
-        jsonRequest.setTag(TAG);
-        rq.add(jsonRequest);
-    }
-
 //    private void doRequest(HashMap<String, String> params){
 //        String url = Url.getUrl()+"Empresa/cadastrarEmpresa";
-//        final HashMap<String, String> params1 = params;
 //
-//        StringRequest jsonRequest = new AutorizacaoRequest(
+//        CustomRequest jsonRequest = new CustomRequest(
 //                Request.Method.POST,
 //                url,
-//                new Response.Listener<String>() {
-//
-//                    public void onResponse(String result) {
-//                        Toast.makeText(CadastrarEmpresaActivity.this, result.toString(), Toast.LENGTH_SHORT).show();
-//
+//                params,
+//                new Response.Listener<JSONObject>() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        Toast.makeText(CadastrarEmpresaActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
 //                    }
 //                },
 //                new Response.ErrorListener() {
+//                    @Override
 //                    public void onErrorResponse(VolleyError error) {
-//                        if (error.networkResponse != null) {
-//                            if (error.networkResponse.statusCode == 401) {
-//                                Toast.makeText(CadastrarEmpresaActivity.this, "Erro de conexao", Toast.LENGTH_SHORT).show();
-//                            }
-//                        }else {
+//                        if (error.networkResponse == null) {
 //                            Toast.makeText(CadastrarEmpresaActivity.this, "Erro de conexao", Toast.LENGTH_SHORT).show();
 //                        }
 //                    }
-//        }){
-//            @Override
-//            public Map<String, String> getParams() throws AuthFailureError {
-//                return(params1);
-//            }
-//        };
-
+//        });
+//
 //        jsonRequest.setTag(TAG);
-//
 //        rq.add(jsonRequest);
-//
 //    }
+
+    private void doRequest(HashMap<String, String> params){
+        String url = Url.getUrl()+"Empresa/cadastrarEmpresa";
+        final HashMap<String, String> params1 = params;
+
+        StringRequest jsonRequest = new AutorizacaoRequest(
+                Request.Method.POST,
+                url,
+                new Response.Listener<String>() {
+
+                    public void onResponse(String result) {
+                        Toast.makeText(CadastrarEmpresaActivity.this, result.toString(), Toast.LENGTH_SHORT).show();
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    public void onErrorResponse(VolleyError error) {
+                        if (error.networkResponse != null) {
+                            if (error.networkResponse.statusCode == 401) {
+                                Toast.makeText(CadastrarEmpresaActivity.this, "Erro de conexao", Toast.LENGTH_SHORT).show();
+                            }
+                        }else {
+                            Toast.makeText(CadastrarEmpresaActivity.this, "Erro de conexao", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+        }){
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                return(params1);
+            }
+        };
+
+        jsonRequest.setTag(TAG);
+
+        rq.add(jsonRequest);
+
+    }
 }
