@@ -19,8 +19,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,10 +44,14 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -77,12 +83,10 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
     private List<EditText> allEdsTelefone = new ArrayList<>();
     private RequestQueue rq;
     private Resources resources;
-    SharedPreferences prefs;
     private static final Object TAG = new Object();
-    String usuario;
-    String senha;
     Gson gson;
     Imagem img = new Imagem();
+    Empresa emp;
 
     EditText nome;
     EditText cnpj;
@@ -108,11 +112,8 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cadastrar_empresa);
 
         rq = Volley.newRequestQueue(CadastrarEmpresaActivity.this);
-        prefs = getSharedPreferences("account", Context.MODE_PRIVATE);
-        prefs.getString(this.getString(R.string.id), "");
-        usuario = prefs.getString(this.getString(R.string.login), "");
-        senha = prefs.getString(this.getString(R.string.password), "");
         gson = new Gson();
+        emp = new Empresa();
 
         initViews();
     }
@@ -166,9 +167,8 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
                             new Thread() {
                                 public void run() {
 
-                                    Empresa emp = new Empresa();
                                     emp.setNomeEmpresa(nome.getText().toString());
-                                    emp.setCnpj(cnpj.getText().toString());
+                                    emp.setCnpj(cnpj.getText().toString().replaceAll("[^0123456789]", ""));
                                     emp.setDescricao(descricao.getText().toString());
 
                                     Endereco endereco = new Endereco(
@@ -176,7 +176,7 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
                                             numero.getText().toString(),
                                             complemento.getText().toString(),
                                             bairro.getText().toString(),
-                                            cep.getText().toString(),
+                                            cep.getText().toString().replaceAll("[^0123456789]", ""),
                                             cidade.getText().toString(),
                                             estado.getText().toString(),
                                             pais.getText().toString()
@@ -186,7 +186,7 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
                                     List<Telefone> telefones = new ArrayList<Telefone>();
                                     Telefone telefone = new Telefone(
                                             tipoTelefone.getText().toString(),
-                                            numeroTelefone.getText().toString()
+                                            numeroTelefone.getText().toString().replaceAll("[^0123456789]", "")
                                     );
 
                                     telefones.add(telefone);
@@ -198,7 +198,7 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
 
                                             Telefone tel = new Telefone(
                                                     allEdsTelefone.get(i).getText().toString(),
-                                                    allEdsTelefone.get(i + 1).getText().toString()
+                                                    allEdsTelefone.get(i + 1).getText().toString().replaceAll("[^0123456789]", "")
                                             );
                                             telefones.add(tel);
 
@@ -211,15 +211,7 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
                                     img.setTipoImagem(1); // Temporario
                                     emp.setImagemPerfil(img);
 
-                                    Pessoa pessoa = new Pessoa();
-                                    pessoa.setLogin(usuario);
-                                    pessoa.setSenha(senha);
-
-                                    HashMap<String, String> params = new HashMap<>();
-                                    params.put("empresa", gson.toJson(emp));
-//                                    params.put("pessoa", gson.toJson(pessoa));
-
-                                    doRequest(params);
+                                    doRequest();
 
                                 }
                             }.start();
@@ -424,6 +416,7 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
         editTextNumeroTel.setSingleLine(true);
         TextWatcher telefoneMask = Mask.insert("(##)#####-####", editTextNumeroTel);
         editTextNumeroTel.addTextChangedListener(telefoneMask);
+        editTextNumeroTel.setInputType(InputType.TYPE_CLASS_NUMBER);
 
         // ADD
         allEdsTelefone.add(editTextNumeroTel);
@@ -495,13 +488,19 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
         }
     }
 
-//    private void doRequest(HashMap<String, String> params){
+//    private void doRequest(){
 //        String url = Url.getUrl()+"Empresa/cadastrarEmpresa";
+//        JSONObject jsonObject = new JSONObject();
+//        try {
+//            jsonObject.put("empresa", emp);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 //
-//        CustomRequest jsonRequest = new CustomRequest(
+//        JsonObjectRequest jsonRequest = new JsonObjectRequest(
 //                Request.Method.POST,
 //                url,
-//                params,
+//                jsonObject,
 //                new Response.Listener<JSONObject>() {
 //                    @Override
 //                    public void onResponse(JSONObject response) {
@@ -511,7 +510,74 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
 //                new Response.ErrorListener() {
 //                    @Override
 //                    public void onErrorResponse(VolleyError error) {
-//                        if (error.networkResponse == null) {
+//                        if (error.networkResponse != null) {
+//                            if (error.networkResponse.statusCode == 401) {
+//                                Toast.makeText(CadastrarEmpresaActivity.this, "Algo incorreto", Toast.LENGTH_SHORT).show();
+//                            }
+//                        } else{
+//                            Toast.makeText(CadastrarEmpresaActivity.this, "Erro de conexao", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//        }){
+//            public Map<String, String> getHeaders() throws AuthFailureError {
+//                String usuario;
+//                String senha;
+//                SharedPreferences prefs = CadastrarEmpresaActivity.this.getSharedPreferences("account", Context.MODE_PRIVATE);
+//                prefs.getString(CadastrarEmpresaActivity.this.getString(R.string.id), "");
+//                usuario = prefs.getString(CadastrarEmpresaActivity.this.getString(R.string.login), "");
+//                senha = prefs.getString(CadastrarEmpresaActivity.this.getString(R.string.password), "");
+//
+//                senha = Base64.encodeToString( //Criptografa apenas a senha
+//                        (senha).getBytes(),
+//                        Base64.NO_WRAP);
+//
+//                return createBasicAuthHeader(usuario, senha);
+//            }
+//
+//            private Map<String, String> createBasicAuthHeader(String username, String password) {
+//                Map<String, String> headerMap = new HashMap<String, String>();
+//
+//                String credentials = username + ":" + password;
+//                String encodedCredentials = Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+//                headerMap.put("Authorization", "Basic " + encodedCredentials);
+//                //headerMap.put("Token", getToken());
+//
+//                return headerMap;
+//            }
+//
+//            @Override
+//            public String getBodyContentType() {
+//                return "application/json";
+//            }
+//        };
+//
+//        jsonRequest.setTag(TAG);
+//        rq.add(jsonRequest);
+//    }
+
+//    private void doRequest(){
+//        String url = Url.getUrl()+"Empresa/cadastrarEmpresa";
+//        HashMap<String, String> params = new HashMap();
+//        params.put("empresa", gson.toJson(emp));
+//
+//        CustomRequest jsonRequest = new CustomRequest(
+//                Request.Method.POST,
+//                url,
+//                params,
+//                new Response.Listener<JSONArray>() {
+//                    @Override
+//                    public void onResponse(JSONArray response) {
+//                        Toast.makeText(CadastrarEmpresaActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        if (error.networkResponse != null) {
+//                            if (error.networkResponse.statusCode == 401) {
+//                                Toast.makeText(CadastrarEmpresaActivity.this, "Algo incorreto", Toast.LENGTH_SHORT).show();
+//                            }
+//                        } else{
 //                            Toast.makeText(CadastrarEmpresaActivity.this, "Erro de conexao", Toast.LENGTH_SHORT).show();
 //                        }
 //                    }
@@ -521,25 +587,24 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
 //        rq.add(jsonRequest);
 //    }
 
-    private void doRequest(HashMap<String, String> params){
+    private void doRequest(){
         String url = Url.getUrl()+"Empresa/cadastrarEmpresa";
-        final HashMap<String, String> params1 = params;
+        final Map params = new HashMap();
+        params.put("empresa", gson.toJson(emp));
 
         StringRequest jsonRequest = new AutorizacaoRequest(
                 Request.Method.POST,
                 url,
                 new Response.Listener<String>() {
-
                     public void onResponse(String result) {
                         Toast.makeText(CadastrarEmpresaActivity.this, result.toString(), Toast.LENGTH_SHORT).show();
-
                     }
                 },
                 new Response.ErrorListener() {
                     public void onErrorResponse(VolleyError error) {
                         if (error.networkResponse != null) {
                             if (error.networkResponse.statusCode == 401) {
-                                Toast.makeText(CadastrarEmpresaActivity.this, "Erro de conexao", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(CadastrarEmpresaActivity.this, "Não autorizado", Toast.LENGTH_SHORT).show();
                             }
                         }else {
                             Toast.makeText(CadastrarEmpresaActivity.this, "Erro de conexao", Toast.LENGTH_SHORT).show();
@@ -548,7 +613,7 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
         }){
             @Override
             public Map<String, String> getParams() throws AuthFailureError {
-                return(params1);
+                return(params);
             }
         };
 

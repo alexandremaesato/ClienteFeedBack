@@ -97,6 +97,11 @@ public class AutorizacaoRequest extends StringRequest {
         return headerMap;
     }
 
+    @Override
+    public String getBodyContentType() {
+        return "application/json";
+    }
+
 
     private String getToken() {
         String token = null;
