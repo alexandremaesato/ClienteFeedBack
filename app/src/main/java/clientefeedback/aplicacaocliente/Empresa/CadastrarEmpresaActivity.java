@@ -59,6 +59,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -589,7 +590,8 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
 
     private void doRequest(){
         String url = Url.getUrl()+"Empresa/cadastrarEmpresa";
-        final Map params = new HashMap();
+        final Map<String, String> params = new HashMap();
+
         params.put("empresa", gson.toJson(emp));
 
         StringRequest jsonRequest = new AutorizacaoRequest(
@@ -613,7 +615,9 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
         }){
             @Override
             public Map<String, String> getParams() throws AuthFailureError {
-                return(params);
+                String encodedCredentials = Base64.encodeToString(gson.toJson(emp).getBytes(), Base64.NO_WRAP);
+                params.put("empresa", encodedCredentials);
+                return params;
             }
         };
 
