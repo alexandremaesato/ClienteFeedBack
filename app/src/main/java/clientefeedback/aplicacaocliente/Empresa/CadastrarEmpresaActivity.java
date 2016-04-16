@@ -253,8 +253,6 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
                         if (items[item].equals(img_cam)) {
 
                             values = new ContentValues();
-                            values.put(MediaStore.Images.Media.TITLE, "New Picture");
-                            values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
                             imageUri = getContentResolver().insert(
                                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
