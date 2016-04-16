@@ -40,7 +40,7 @@ public class CustomRequest extends Request<JSONArray> {
     protected Map<String, String> getParams()
             throws com.android.volley.AuthFailureError {
         return params;
-    };
+    }
 
     public Map<String, String> getHeaders() throws AuthFailureError {
         String usuario;
