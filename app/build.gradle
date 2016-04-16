@@ -25,9 +25,12 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile project(':volley')
-    compile 'com.google.code.gson:gson:2.2.4'
+    compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.android.support:design:23.2.1'
     compile 'com.google.android.gms:play-services:8.4.0'
     compile 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
     compile 'com.android.support:support-v4:23.2.1'
+    compile 'org.florescu.android.rangeseekbar:rangeseekbar-library:0.3.0'
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
+
 }

@@ -1,6 +1,8 @@
 package clientefeedback.aplicacaocliente.Models;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Guilherme on 23/02/2016.
@@ -14,11 +16,11 @@ public class Empresa {
     private Imagem imagemPerfil;
     private List<Imagem> imagensNaoOficiais;
     private List<Imagem> imagensOficiais;
-    //private List<Comentario> comentarios;
-    //private List<Avaliacao> avaliacoes;
+    private List<Comentario> comentarios;
+    private List<Avaliacao> avaliacoes;
     private List<Telefone> telefones;
     private Endereco endereco;
-    //private List<Produto> produtos;
+    private List<Produto> produtos;
     private List avaliacaoNota;
     private int qtdeComentarios;
     private int qtdeAvaliacoes;
@@ -79,21 +81,21 @@ public class Empresa {
         this.imagensOficiais = imagensOficiais;
     }
 
-//    public List<Comentario> getComentarios() {
-//        return comentarios;
-//    }
-//
-//    public void setComentarios(List<Comentario> comentarios) {
-//        this.comentarios = comentarios;
-//    }
-//
-//    public List<Avaliacao> getAvaliacoes() {
-//        return avaliacoes;
-//    }
-//
-//    public void setAvaliacoes(List<Avaliacao> avaliacoes) {
-//        this.avaliacoes = avaliacoes;
-//    }
+    public List<Comentario> getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentarios(List<Comentario> comentarios) {
+        this.comentarios = comentarios;
+    }
+
+    public List<Avaliacao> getAvaliacoes() {
+        return avaliacoes;
+    }
+
+    public void setAvaliacoes(List<Avaliacao> avaliacoes) {
+        this.avaliacoes = avaliacoes;
+    }
 
     public List<Telefone> getTelefones() {
         return telefones;
@@ -111,13 +113,13 @@ public class Empresa {
         this.endereco = endereco;
     }
 
-//    public List<Produto> getProdutos() {
-//        return produtos;
-//    }
-//
-//    public void setProdutos(List<Produto> produtos) {
-//        this.produtos = produtos;
-//    }
+    public List<Produto> getProdutos() {
+        return produtos;
+    }
+
+    public void setProdutos(List<Produto> produtos) {
+        this.produtos = produtos;
+    }
 
     public List getAvaliacaoNota() {
         return avaliacaoNota;
@@ -142,5 +144,28 @@ public class Empresa {
     public void setQtdeAvaliacoes(int qtdeAvaliacoes) {
         this.qtdeAvaliacoes = qtdeAvaliacoes;
     }
+
+    public Map empresa(){
+        HashMap<String,Object> empresa = new HashMap<String,Object>();
+
+        empresa.put("empresaId", this.empresaId);
+        empresa.put("nomeEmpresa", this.nomeEmpresa);
+        empresa.put("avaliacaoNota", this.avaliacaoNota);
+        empresa.put("cnpj", this.cnpj);
+        empresa.put("avaliacoes", this.avaliacoes);
+        empresa.put("comentarios", this.comentarios);
+        empresa.put("descricao", this.descricao);
+        empresa.put("endereco", this.endereco);
+        empresa.put("imagemPerfil", this.imagemPerfil);
+        empresa.put("imagensOficiais", this.imagensOficiais);
+        empresa.put("imagensNaoOficiais", this.imagensNaoOficiais);
+        empresa.put("produtos", this.produtos);
+        empresa.put("qtdeAvaliacoes", this.qtdeAvaliacoes);
+        empresa.put("qtdeComentarios", this.qtdeComentarios);
+        empresa.put("telefones", this.telefones);
+
+        return empresa;
+    }
+
 
 }

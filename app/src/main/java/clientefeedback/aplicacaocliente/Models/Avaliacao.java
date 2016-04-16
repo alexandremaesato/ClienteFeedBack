@@ -1,0 +1,63 @@
+package clientefeedback.aplicacaocliente.Models;
+
+/**
+ * Created by Alexandre on 14/04/2016.
+ */
+public class Avaliacao {
+
+    private int avaliacaoid;
+    private int avaliadoid;
+    private int pessoaid;
+    private int nota;
+    private String descricao;
+    private String tipoAvalicao;
+
+    public int getAvaliacaoid() {
+        return avaliacaoid;
+    }
+
+    public void setAvaliacaoid(int avaliacaoid) {
+        this.avaliacaoid = avaliacaoid;
+    }
+
+    public int getAvaliadoid() {
+        return avaliadoid;
+    }
+
+    public void setAvaliadoid(int avaliadoid) {
+        this.avaliadoid = avaliadoid;
+    }
+
+    public int getPessoaid() {
+        return pessoaid;
+    }
+
+    public void setPessoaid(int pessoaid) {
+        this.pessoaid = pessoaid;
+    }
+
+    public int getNota() {
+        return nota;
+    }
+
+    public void setNota(int nota) {
+        this.nota = nota;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public String getTipoAvalicao() {
+        return tipoAvalicao;
+    }
+
+    public void setTipoAvalicao(String tipoAvalicao) {
+        this.tipoAvalicao = tipoAvalicao;
+    }
+}
+

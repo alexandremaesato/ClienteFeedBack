@@ -49,31 +49,8 @@ public class CadastrarAutenticacaoRequest extends StringRequest {
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
-//        String usuario;
-//        String senha;
-//        SharedPreferences prefs = c.getSharedPreferences("account", Context.MODE_PRIVATE);
-//        prefs.getString(c.getString(R.string.id), "");
-//        usuario = prefs.getString(c.getString(R.string.login), "");
-//        senha = prefs.getString(c.getString(R.string.password), "");
-//
-//        senha = Base64.encodeToString( //Criptografa apenas a senha
-//                (senha).getBytes(),
-//                Base64.NO_WRAP);
-//        return createBasicAuthHeader(usuario, senha);
         return AutenticacaoHeaders.basicRegister(login, senha);
     }
-
-//    private Map<String, String> createBasicAuthHeader(String username, String password) {
-//        Map<String, String> headerMap = new HashMap<String, String>();
-//
-//        String credentials = username + ":" + password;
-//        String encodedCredentials = Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-//        headerMap.put("Register", "Basic " + encodedCredentials);
-//        //headerMap.put("Token", getToken());
-//
-//        return headerMap;
-//    }
-
 
 }
 
