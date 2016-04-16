@@ -1,5 +1,6 @@
 package clientefeedback.aplicacaocliente.Empresa;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
@@ -88,6 +89,8 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
     Gson gson;
     Imagem img = new Imagem();
     Empresa emp;
+    Uri imageUri;
+    ContentValues values;
 
     EditText nome;
     EditText cnpj;
@@ -248,7 +251,14 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int item) {
                         if (items[item].equals(img_cam)) {
+
+                            values = new ContentValues();
+                            values.put(MediaStore.Images.Media.TITLE, "New Picture");
+                            values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
+                            imageUri = getContentResolver().insert(
+                                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                             startActivityForResult(intent, REQUEST_CAMERA);
 
                         } else if (items[item].equals(img_lib)) {
@@ -435,7 +445,13 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
             ivImage = (ImageView) findViewById(R.id.ivImage);
 
             if (requestCode == REQUEST_CAMERA) {
-                Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+                Bitmap thumbnail = null;
+                try {
+                    thumbnail = MediaStore.Images.Media.getBitmap(
+                            getContentResolver(), imageUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                 thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
 
@@ -488,105 +504,6 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
             }
         }
     }
-
-//    private void doRequest(){
-//        String url = Url.getUrl()+"Empresa/cadastrarEmpresa";
-//        JSONObject jsonObject = new JSONObject();
-//        try {
-//            jsonObject.put("empresa", emp);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//        JsonObjectRequest jsonRequest = new JsonObjectRequest(
-//                Request.Method.POST,
-//                url,
-//                jsonObject,
-//                new Response.Listener<JSONObject>() {
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//                        Toast.makeText(CadastrarEmpresaActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        if (error.networkResponse != null) {
-//                            if (error.networkResponse.statusCode == 401) {
-//                                Toast.makeText(CadastrarEmpresaActivity.this, "Algo incorreto", Toast.LENGTH_SHORT).show();
-//                            }
-//                        } else{
-//                            Toast.makeText(CadastrarEmpresaActivity.this, "Erro de conexao", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//        }){
-//            public Map<String, String> getHeaders() throws AuthFailureError {
-//                String usuario;
-//                String senha;
-//                SharedPreferences prefs = CadastrarEmpresaActivity.this.getSharedPreferences("account", Context.MODE_PRIVATE);
-//                prefs.getString(CadastrarEmpresaActivity.this.getString(R.string.id), "");
-//                usuario = prefs.getString(CadastrarEmpresaActivity.this.getString(R.string.login), "");
-//                senha = prefs.getString(CadastrarEmpresaActivity.this.getString(R.string.password), "");
-//
-//                senha = Base64.encodeToString( //Criptografa apenas a senha
-//                        (senha).getBytes(),
-//                        Base64.NO_WRAP);
-//
-//                return createBasicAuthHeader(usuario, senha);
-//            }
-//
-//            private Map<String, String> createBasicAuthHeader(String username, String password) {
-//                Map<String, String> headerMap = new HashMap<String, String>();
-//
-//                String credentials = username + ":" + password;
-//                String encodedCredentials = Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-//                headerMap.put("Authorization", "Basic " + encodedCredentials);
-//                //headerMap.put("Token", getToken());
-//
-//                return headerMap;
-//            }
-//
-//            @Override
-//            public String getBodyContentType() {
-//                return "application/json";
-//            }
-//        };
-//
-//        jsonRequest.setTag(TAG);
-//        rq.add(jsonRequest);
-//    }
-
-//    private void doRequest(){
-//        String url = Url.getUrl()+"Empresa/cadastrarEmpresa";
-//        HashMap<String, String> params = new HashMap();
-//        params.put("empresa", gson.toJson(emp));
-//
-//        CustomRequest jsonRequest = new CustomRequest(
-//                Request.Method.POST,
-//                url,
-//                params,
-//                new Response.Listener<JSONArray>() {
-//                    @Override
-//                    public void onResponse(JSONArray response) {
-//                        Toast.makeText(CadastrarEmpresaActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        if (error.networkResponse != null) {
-//                            if (error.networkResponse.statusCode == 401) {
-//                                Toast.makeText(CadastrarEmpresaActivity.this, "Algo incorreto", Toast.LENGTH_SHORT).show();
-//                            }
-//                        } else{
-//                            Toast.makeText(CadastrarEmpresaActivity.this, "Erro de conexao", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//        });
-//
-//        jsonRequest.setTag(TAG);
-//        rq.add(jsonRequest);
-//    }
 
     private void doRequest(){
         String url = Url.getUrl()+"Empresa/cadastrarEmpresa";
