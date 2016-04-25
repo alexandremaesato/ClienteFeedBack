@@ -46,6 +46,7 @@ public class FilterActivity extends AppCompatActivity {
     Spinner spinnerCidades;
     Spinner spinnerBairros;
     Spinner spinnerCulinaria;
+    Spinner spinnerOrdenacao;
     ArrayAdapter<String> adapterCidades;
     ArrayAdapter<String> adapterBairros;
     Long sharedCulinaria;
@@ -56,8 +57,7 @@ public class FilterActivity extends AppCompatActivity {
     int sharedValorMinimo;
     int sharedComentados;
     int sharedBuscados;
-    RadioGroup rgComentados;
-    RadioGroup rgBuscados;
+    Long sharedOrdenacao;
     ProgressBar progressBar;
     private static final Object TAG = new Object();
     RequestQueue mQueue;
@@ -75,6 +75,12 @@ public class FilterActivity extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
         carregarSharedPreferences();
 
+        spinnerOrdenacao = (Spinner) findViewById(R.id.spinnerOrdenacao);
+        ArrayAdapter<CharSequence> adapterOrdem = ArrayAdapter.createFromResource(this,
+                R.array.tipo_ordem, android.R.layout.simple_spinner_item);
+        adapterOrdem.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerOrdenacao.setAdapter(adapterOrdem);
+        spinnerOrdenacao.setSelection(sharedOrdenacao.intValue());
 
         spinnerCulinaria = (Spinner) findViewById(R.id.spinnerCulinaria);
         ArrayAdapter<CharSequence> adapterCulinaria = ArrayAdapter.createFromResource(this,
@@ -92,10 +98,10 @@ public class FilterActivity extends AppCompatActivity {
         layout.addView(rangeSeekBar);
         rangeSeekBar.setTextAboveThumbsColorResource(android.R.color.holo_orange_dark);
 
-        rgComentados = (RadioGroup)findViewById(R.id.rgComentados);
-        rgComentados.check(sharedComentados);
-        rgBuscados = (RadioGroup)findViewById(R.id.rgBuscados);
-        rgBuscados.check(sharedBuscados);
+//        rgComentados = (RadioGroup)findViewById(R.id.rgComentados);
+//        rgComentados.check(sharedComentados);
+//        rgBuscados = (RadioGroup)findViewById(R.id.rgBuscados);
+//        rgBuscados.check(sharedBuscados);
 
 
         spinnerCidades = (Spinner) findViewById(R.id.spinnerCidade);
@@ -183,28 +189,46 @@ public class FilterActivity extends AppCompatActivity {
     public void carregarSharedPreferences(){
         SharedPreferences sharedPreferences;
         sharedPreferences = getSharedPreferences("filtro", Context.MODE_PRIVATE);
-        sharedCulinaria = sharedPreferences.getLong("culinaria", 0);
-        sharedEstado = sharedPreferences.getLong("estado", 0);
-        sharedCidade = sharedPreferences.getLong("cidade",0);
-        sharedBairro = sharedPreferences.getLong("bairro",0);
-        sharedValorMinimo = sharedPreferences.getInt("valorMinimo", 5);
-        sharedValorMaximo = sharedPreferences.getInt("valorMaximo", 500);
-        sharedComentados = sharedPreferences.getInt("comentados",0);
-        sharedBuscados = sharedPreferences.getInt("buscados", 0);
+        sharedOrdenacao = sharedPreferences.getLong("ordenacaoId", 0);
+        sharedCulinaria = sharedPreferences.getLong("culinariaId", 0);
+        sharedEstado = sharedPreferences.getLong("estadoId", 0);
+        sharedCidade = sharedPreferences.getLong("cidadeId",0);
+        sharedBairro = sharedPreferences.getLong("bairroId",0);
+        sharedValorMinimo = sharedPreferences.getInt("valorMinimoId", 5);
+        sharedValorMaximo = sharedPreferences.getInt("valorMaximoId", 500);
+        sharedComentados = sharedPreferences.getInt("comentadosId",0);
+        sharedBuscados = sharedPreferences.getInt("buscadosId", 0);
     }
 
     public void salvarSharedPreferences(){
         SharedPreferences sharedPreferences;
         sharedPreferences = getSharedPreferences("filtro", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putLong("culinaria", spinnerCulinaria.getSelectedItemId());
-        editor.putLong("estado", spinnerEstados.getSelectedItemId());
-        editor.putLong("cidade", spinnerCidades.getSelectedItemId());
-        editor.putLong("bairro", spinnerBairros.getSelectedItemId());
+        editor.putLong("ordenacaoId", spinnerOrdenacao.getSelectedItemId());
+        editor.putString("ordenacao", spinnerOrdenacao.getSelectedItem().toString());
+
+        editor.putLong("culinariaId", spinnerCulinaria.getSelectedItemId());
+        editor.putString("culinaria", spinnerCulinaria.getSelectedItem().toString());
+
+        editor.putLong("estadoId", spinnerEstados.getSelectedItemId());
+        editor.putString("estado", spinnerEstados.getSelectedItem().toString());
+
+        editor.putLong("cidadeId", spinnerCidades.getSelectedItemId());
+        editor.putString("cidade", spinnerCidades.getSelectedItem().toString());
+
+        editor.putLong("bairroId", spinnerBairros.getSelectedItemId());
+        editor.putString("bairro", spinnerBairros.getSelectedItem().toString());
+
         editor.putInt("valorMinimo", rangeSeekBar.getSelectedMinValue());
+
         editor.putInt("valorMaximo", rangeSeekBar.getSelectedMaxValue());
-        editor.putInt("comentados", rgComentados.getCheckedRadioButtonId());
-        editor.putInt("buscados", rgBuscados.getCheckedRadioButtonId());
+
+//        editor.putInt("comentadosId", rgComentados.getCheckedRadioButtonId());
+//        editor.putString("comentados", rgComentados.);
+//
+//        editor.putInt("buscadosId", rgBuscados.getCheckedRadioButtonId());
+//        editor.putString("buscados", rgBuscados.toString());
+
         editor.commit();
     }
 

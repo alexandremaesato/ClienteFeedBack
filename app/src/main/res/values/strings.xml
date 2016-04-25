@@ -158,5 +158,15 @@
         <item>SE</item>
         <item>TO</item>
     </string-array>
+<!--Array de Ordenação-->
+    <string-array name="tipo_ordem">
+        <item>Nome</item>
+        <item>Menor Valor</item>
+        <item>Maior Valor</item>
+        <item>Nota Maior</item>
+        <item>Nota Menor</item>
+        <item>Mais Comentados</item>
+        <item>Menos Comentados</item>
+    </string-array>
 
 </resources>
