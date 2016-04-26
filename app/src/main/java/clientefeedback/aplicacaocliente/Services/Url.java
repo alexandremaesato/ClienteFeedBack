@@ -18,8 +18,6 @@ public class Url {
         return url;
     }
 
-    public static String cadastrarEmpresaUrl() {return url+"Empresa/cadastrarEmpresa";}
-
     public static String autenticacao(Context c){
         String res;
         AutenticacaoDao dao = new AutenticacaoDao(c);

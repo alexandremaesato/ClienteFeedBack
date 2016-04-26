@@ -9,9 +9,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -40,12 +42,13 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import clientefeedback.aplicacaocliente.Busca.BuscaFragment;
+import clientefeedback.aplicacaocliente.Empresa.CadastrarEmpresaActivity;
 import clientefeedback.aplicacaocliente.Services.AutorizacaoRequest;
 import clientefeedback.aplicacaocliente.Services.CadastrarAutenticacaoRequest;
 import clientefeedback.aplicacaocliente.Services.Url;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener {
     android.app.FragmentManager fm = getFragmentManager();
     Fragment mFragment = null;
     FragmentManager mFragmentManager = getSupportFragmentManager();
@@ -143,8 +146,10 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.tabPagerExemplo) {
             mFragment = new ViewPagerFragment();
 
-        } else if (id == R.id.nav_manage) {
-            mFragment = new CadastrarEmpresaFragment();
+        } else if (id == R.id.cadastrarEmpresa) {
+//            mFragment = new CadastrarEmpresaFragment();
+            Intent it = new Intent(this, CadastrarEmpresaActivity.class);
+            startActivity(it);
 
         } else if (id == R.id.nav_share) {
 
@@ -396,5 +401,30 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(getString(R.string.login), "");
         editor.commit();
+    }
+
+    public void showPopup(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        MenuInflater inflater = popup.getMenuInflater();
+        popup.setOnMenuItemClickListener(this);
+        inflater.inflate(R.menu.menu_card, popup.getMenu());
+        popup.show();
+    }
+
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.lista_desejos:
+                Toast.makeText(this, "Foi para Lista de Desejo", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.algo:
+                Toast.makeText(this, "foi para algo", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public void setFavorito(View v){
+        Toast.makeText(this, "Foi para Favoritos", Toast.LENGTH_SHORT).show();
     }
 }

@@ -216,7 +216,6 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
                                     emp.setImagemPerfil(img);
 
                                     doRequest();
-
                                 }
                             }.start();
                         }

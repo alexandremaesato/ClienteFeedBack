@@ -18,9 +18,7 @@ import clientefeedback.aplicacaocliente.CustomApplication;
 import clientefeedback.aplicacaocliente.Models.Empresa;
 import clientefeedback.aplicacaocliente.R;
 
-/**
- * Created by viniciusthiengo on 2/1/15.
- */
+
 public class BuscaEmpresaAdapter extends BaseAdapter {
     private List<Empresa> list;
     private LayoutInflater inflater;

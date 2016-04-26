@@ -20,6 +20,7 @@
 
     <!-- Tela Cadastrar Empresa-->
     <string name="cadastro_empresa">Cadastro de Empresa</string>
+    <string name="cadastrar_empresa">Cadastrar Empresa</string>
     <string name="nome_empresa">Nome:</string>
     <string name="cnpj">CNPJ:</string>
     <string name="endereco">Endereço da Empresa</string>
@@ -50,12 +51,17 @@
     <string name="estado_obrigatorio">Estado é Obrigatório</string>
     <string name="pais_obrigatorio">País é Obrigatório</string>
 
+    <!-- Tela Login -->
+    <string name="connection_swipe">Sem conexão com Internet. Por favor, verifique seu WIFI ou 3G.</string>
+    <string name="connect">Conectar</string>
+
     <!-- Valores de Dados Compartilhados -->
     <string name="SharedPreferences">SharedPreferences</string>
     <string name="login">login</string>
     <string name="senha">senha</string>
     <string name="title_activity_logindemo">Sign in</string>
     <string name="save">Salvar</string>
+    <string name="favoritar">Favoritar</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -82,6 +88,7 @@
     <string name="password">password</string>
     <string name="photo">foto</string>
     <string name="id">id</string>
+    <string name="lista_desejos">Adicionar a Lista de Desejos</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

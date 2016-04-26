@@ -14,6 +14,7 @@ public class Empresa {
     private String cnpj;
     private String descricao;
     private Imagem imagemPerfil;
+    private int photo; // Apenas para teste
     private List<Imagem> imagensNaoOficiais;
     private List<Imagem> imagensOficiais;
     private List<Comentario> comentarios;
@@ -24,6 +25,16 @@ public class Empresa {
     private List avaliacaoNota;
     private int qtdeComentarios;
     private int qtdeAvaliacoes;
+
+    // TESTE
+        public int getPhoto() {
+            return photo;
+        }
+
+        public void setPhoto(int photo) {
+            this.photo = photo;
+        }
+    // TESTE
 
     public int getEmpresaId() {
         return empresaId;

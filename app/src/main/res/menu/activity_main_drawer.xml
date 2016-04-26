@@ -15,9 +15,9 @@
             android:icon="@drawable/ic_menu_slideshow"
             android:title="TabPager Exempplo" />
         <item
-            android:id="@+id/nav_manage"
+            android:id="@+id/cadastrarEmpresa"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:title="@string/cadastrar_empresa" />
     </group>
 
     <item android:title="Communicate">
