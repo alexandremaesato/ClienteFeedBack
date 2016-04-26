@@ -9,9 +9,9 @@ import clientefeedback.aplicacaocliente.BD.AutenticacaoDao;
  */
 public class Url {
 
-    private static String url = "http://192.168.25.15:8080/ServidorAplicativo/webresources/";
+    //private static String url = "http://192.168.25.15:8080/ServidorAplicativo/webresources/";
 //    private static String url = "http://172.20.82.32:8080/ServidorAplicativo/webresources/";
-//    private static String url = "http://192.168.1.2:8080/ServidorAplicativo/webresources/";
+    private static String url = "http://192.168.1.20:8080/ServidorAplicativo/webresources/";
 
 
     public static String getUrl() {

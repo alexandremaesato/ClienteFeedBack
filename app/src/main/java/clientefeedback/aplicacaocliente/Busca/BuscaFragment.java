@@ -1,9 +1,12 @@
 package clientefeedback.aplicacaocliente.Busca;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,10 +21,21 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import clientefeedback.aplicacaocliente.MainActivity;
 import clientefeedback.aplicacaocliente.Models.Empresa;
+import clientefeedback.aplicacaocliente.Models.Filtro;
 import clientefeedback.aplicacaocliente.R;
 import clientefeedback.aplicacaocliente.RequestData;
 import clientefeedback.aplicacaocliente.Services.Url;
@@ -29,7 +43,7 @@ import clientefeedback.aplicacaocliente.Transaction;
 import clientefeedback.aplicacaocliente.VolleyConn;
 
 
-public class BuscaFragment extends Fragment implements  AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
+public class BuscaFragment extends Fragment implements Transaction, AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
 
     private boolean mSearchCheck;
     private static final String TEXT_FRAGMENT = "Busca";
@@ -66,10 +80,9 @@ public class BuscaFragment extends Fragment implements  AdapterView.OnItemClickL
         listView = (ListView) rootView.findViewById(R.id.listView);
         listView.setOnItemClickListener(this);
         listView.setOnScrollListener(this);
+        (new VolleyConn(getContext(), this)).execute();
 
-
-
-        rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT ));
+        rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         return rootView;
     }
 
@@ -150,18 +163,22 @@ public class BuscaFragment extends Fragment implements  AdapterView.OnItemClickL
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//        Intent it = new Intent(getContext(), DetailsActivity.class);
+//        it.putExtra("car", list.get(position));
+//        Bundle b = new Bundle();
+//        b.put
+//        startActivity(it);
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int i) {
         if(view.getId() == listView.getId() && isThereMore){
             if(listView.getLastVisiblePosition() + 1 == list.size()){
                 empresa.setEmpresaId(list.get(list.size() - 1).getEmpresaId());
                 isThereMore = false;
-                //Executa o Volley
+                (new VolleyConn(getContext(), this)).execute();
             }
         }
-    }
-
-    @Override
-    public void onScrollStateChanged(AbsListView absListView, int i) {
-
     }
 
     @Override
@@ -169,4 +186,63 @@ public class BuscaFragment extends Fragment implements  AdapterView.OnItemClickL
 
     }
 
+    @Override
+    public void doBefore() {
+        progressBar.setVisibility(View.VISIBLE);
+
+    }
+
+    @Override
+    public void doAfter(String answer) {
+        try{
+            JSONObject json = new JSONObject(answer);
+            JSONArray empresasJson = json.getJSONArray("Empresas");
+            Gson gson = new Gson();
+            List<Empresa> empresas= new ArrayList<Empresa>();
+
+            empresas = gson.fromJson(empresasJson.toString(),  new TypeToken<ArrayList<Empresa>>() {
+            }.getType());
+
+            if(empresas.size() > 0){
+                if(adapter == null){
+                    adapter = new BuscaEmpresaAdapter(getContext(), empresas);
+                    listView.setAdapter(adapter);
+                }
+                else{
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        finally {
+            progressBar.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public RequestData getRequestData() {
+        return( new RequestData(Url.getUrl()+"Empresa/buscarEmpresas", "", getParams()) );
+    }
+
+    public Map<String,String> getParams() {
+
+        SharedPreferences sharedPreferences;
+        sharedPreferences = getContext().getSharedPreferences("filtro", Context.MODE_PRIVATE);
+        Filtro filtro = new Filtro();
+        Gson gson = new Gson();
+        Map<String,String> lista = new HashMap<String,String>();
+
+        filtro.setCulinaria(sharedPreferences.getString("culinaria", ""));
+        filtro.setEstado(sharedPreferences.getString("estado", ""));
+        filtro.setCidade(sharedPreferences.getString("cidade", ""));
+        filtro.setBairro(sharedPreferences.getString("bairro", ""));
+        filtro.setValorMinimo(String.valueOf(sharedPreferences.getInt("valorMinimo", 0)));
+        filtro.setValorMaximo(String.valueOf(sharedPreferences.getInt("valorMaximo", 500)));
+        filtro.setOrdecacao(sharedPreferences.getString("ordenacao", ""));
+        lista.put("filtro",gson.toJson(filtro));
+
+        return lista;
+    }
 }
