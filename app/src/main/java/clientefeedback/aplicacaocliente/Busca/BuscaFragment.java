@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -33,7 +35,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import clientefeedback.aplicacaocliente.CadastrarEmpresaFragment;
+import clientefeedback.aplicacaocliente.Empresa.DetalhesEmpresaFragment;
+import clientefeedback.aplicacaocliente.Empresa.PrincipalEmpresaFragment;
 import clientefeedback.aplicacaocliente.MainActivity;
+import clientefeedback.aplicacaocliente.MainFragment;
 import clientefeedback.aplicacaocliente.Models.Empresa;
 import clientefeedback.aplicacaocliente.Models.Filtro;
 import clientefeedback.aplicacaocliente.R;
@@ -44,7 +50,8 @@ import clientefeedback.aplicacaocliente.VolleyConn;
 
 
 public class BuscaFragment extends Fragment implements Transaction, AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
-
+    static FragmentManager f;
+    private Context c = getContext();
     private boolean mSearchCheck;
     private static final String TEXT_FRAGMENT = "Busca";
     private ListView listView;
@@ -53,6 +60,9 @@ public class BuscaFragment extends Fragment implements Transaction, AdapterView.
     private Empresa empresa;
     private boolean isThereMore;
     private List<Empresa> list;
+    private Button botaoTeste;
+    Fragment mFragment = null;
+    FragmentManager mFragmentManager = this.getFragmentManager();
 
     public static BuscaFragment newInstance(String text){
         BuscaFragment mFragment = new BuscaFragment();
@@ -61,6 +71,12 @@ public class BuscaFragment extends Fragment implements Transaction, AdapterView.
         mFragment.setArguments(mBundle);
 
         return mFragment;
+    }
+    public  BuscaFragment(){
+
+    }
+    public BuscaFragment (FragmentManager f){
+        this.f = f;
     }
 
     @Override
@@ -81,6 +97,24 @@ public class BuscaFragment extends Fragment implements Transaction, AdapterView.
         listView.setOnItemClickListener(this);
         listView.setOnScrollListener(this);
         (new VolleyConn(getContext(), this)).execute();
+
+        /// TESTE TESTE TESTE TESTE TESTE TESTE TESTE TESTE TESTE TESTE TESTE TESTE
+
+
+        botaoTeste = (Button)rootView.findViewById(R.id.btnTeste);
+        botaoTeste.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("teste");
+                new CarregaEmpresaRequest(view,getContext(),f);
+
+//                mFragment = new PrincipalEmpresaFragment();
+//                mFragmentManager = f;
+//                mFragmentManager.beginTransaction().replace(R.id.conteudo, mFragment).commit();
+
+            }
+        });
+        /// TESTE fim TESTE fim TESTE fim TESTE fim TESTE fimTESTE fim TESTE fim
 
         rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         return rootView;
@@ -241,8 +275,7 @@ public class BuscaFragment extends Fragment implements Transaction, AdapterView.
         filtro.setValorMinimo(String.valueOf(sharedPreferences.getInt("valorMinimo", 0)));
         filtro.setValorMaximo(String.valueOf(sharedPreferences.getInt("valorMaximo", 500)));
         filtro.setOrdecacao(sharedPreferences.getString("ordenacao", ""));
-        lista.put("filtro",gson.toJson(filtro));
-
+        lista.put("filtro", gson.toJson(filtro));
         return lista;
     }
 }

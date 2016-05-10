@@ -151,7 +151,6 @@ public class MainFragment extends Fragment implements RecyclerViewOnClickListene
         searchView.setOnQueryTextListener(onQuerySearchView);
 
         menu.findItem(R.id.menu_add).setVisible(true);
-
         mSearchCheck = false;
     }
 
@@ -162,7 +161,8 @@ public class MainFragment extends Fragment implements RecyclerViewOnClickListene
         switch (item.getItemId()) {
 
             case R.id.menu_add:
-                Toast.makeText(getActivity(), "Add", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getContext(), CadastrarEmpresaActivity.class);
+                startActivity(intent);
                 break;
 
             case R.id.menu_search:
@@ -182,7 +182,7 @@ public class MainFragment extends Fragment implements RecyclerViewOnClickListene
         @Override
         public boolean onQueryTextChange(String s) {
             if (mSearchCheck){
-                // implement your search here
+                Toast.makeText(getContext(), "Teste", Toast.LENGTH_SHORT).show();
             }
             return false;
         }

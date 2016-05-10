@@ -18,6 +18,12 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Carregar Empresa"
+        android:id="@+id/btnTeste" />
+
     <TextView
         android:id="@+id/txtTitle"
         android:layout_width="fill_parent"

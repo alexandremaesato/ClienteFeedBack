@@ -43,6 +43,7 @@ import com.android.volley.toolbox.Volley;
 
 import clientefeedback.aplicacaocliente.Busca.BuscaFragment;
 import clientefeedback.aplicacaocliente.Empresa.CadastrarEmpresaActivity;
+import clientefeedback.aplicacaocliente.Empresa.PrincipalEmpresaFragment;
 import clientefeedback.aplicacaocliente.Services.AutorizacaoRequest;
 import clientefeedback.aplicacaocliente.Services.CadastrarAutenticacaoRequest;
 import clientefeedback.aplicacaocliente.Services.Url;
@@ -146,17 +147,13 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.tabPagerExemplo) {
             mFragment = new ViewPagerFragment();
 
-        } else if (id == R.id.cadastrarEmpresa) {
-//            mFragment = new CadastrarEmpresaFragment();
-            Intent it = new Intent(this, CadastrarEmpresaActivity.class);
-            startActivity(it);
-
         } else if (id == R.id.nav_share) {
+            mFragment = new PrincipalEmpresaFragment();
 
         } else if (id == R.id.nav_send) {
 
         } else if (id == R.id.nav_busca) {
-            mFragment = new BuscaFragment();
+            mFragment = new BuscaFragment(mFragmentManager);
         }
 
         if (mFragment != null) {

@@ -1,5 +1,9 @@
 package clientefeedback.aplicacaocliente.Models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,7 +11,7 @@ import java.util.Map;
 /**
  * Created by Guilherme on 23/02/2016.
  */
-public class Empresa {
+public class Empresa implements Parcelable{
 
     private int empresaId;
     private String nomeEmpresa;
@@ -22,9 +26,44 @@ public class Empresa {
     private List<Telefone> telefones;
     private Endereco endereco;
     private List<Produto> produtos;
-    private List avaliacaoNota;
+    private String avaliacaoNota;
     private int qtdeComentarios;
     private int qtdeAvaliacoes;
+
+    public Empresa(){
+
+    }
+
+    protected Empresa(Parcel in) {
+        empresaId = in.readInt();
+        nomeEmpresa = in.readString();
+        cnpj = in.readString();
+        descricao = in.readString();
+        imagemPerfil = (Imagem)in.readValue(Imagem.class.getClassLoader());
+        imagensNaoOficiais = (ArrayList<Imagem>)in.readArrayList(Imagem.class.getClassLoader());
+        imagensOficiais = (ArrayList<Imagem>)in.readArrayList(Imagem.class.getClassLoader());
+        comentarios = (ArrayList<Comentario>)in.readArrayList(Comentario.class.getClassLoader());
+        avaliacoes = (ArrayList<Avaliacao>)in.readArrayList(Avaliacao.class.getClassLoader());
+        telefones = (ArrayList<Telefone>)in.readArrayList(Telefone.class.getClassLoader());
+        endereco = (Endereco)in.readValue(Endereco.class.getClassLoader());
+        produtos = (ArrayList<Produto>)in.readArrayList(Produto.class.getClassLoader());
+        avaliacaoNota = in.readString();
+
+        qtdeComentarios = in.readInt();
+        qtdeAvaliacoes = in.readInt();
+    }
+
+    public static final Creator<Empresa> CREATOR = new Creator<Empresa>() {
+        @Override
+        public Empresa createFromParcel(Parcel in) {
+            return new Empresa(in);
+        }
+
+        @Override
+        public Empresa[] newArray(int size) {
+            return new Empresa[size];
+        }
+    };
 
     // TESTE
         public int getPhoto() {
@@ -35,6 +74,8 @@ public class Empresa {
             this.photo = photo;
         }
     // TESTE
+
+
 
     public int getEmpresaId() {
         return empresaId;
@@ -132,11 +173,11 @@ public class Empresa {
         this.produtos = produtos;
     }
 
-    public List getAvaliacaoNota() {
+    public String getAvaliacaoNota() {
         return avaliacaoNota;
     }
 
-    public void setAvaliacaoNota(List avaliacaoNota) {
+    public void setAvaliacaoNota(String avaliacaoNota) {
         this.avaliacaoNota = avaliacaoNota;
     }
 
@@ -179,4 +220,27 @@ public class Empresa {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(empresaId);
+        parcel.writeString(nomeEmpresa);
+        parcel.writeString(cnpj);
+        parcel.writeString(descricao);
+        parcel.writeValue(imagemPerfil);
+        parcel.writeValue(imagensNaoOficiais);
+        parcel.writeValue(imagensOficiais);
+        parcel.writeValue(comentarios);
+        parcel.writeValue(avaliacoes);
+        parcel.writeValue(telefones);
+        parcel.writeValue(endereco);
+        parcel.writeValue(produtos);
+        parcel.writeString(avaliacaoNota);
+        parcel.writeInt(qtdeComentarios);
+        parcel.writeInt(qtdeAvaliacoes);
+    }
 }

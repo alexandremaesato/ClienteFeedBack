@@ -1,9 +1,12 @@
 package clientefeedback.aplicacaocliente.Models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Guilherme on 01/04/2016.
  */
-public class Endereco {
+public class Endereco implements Parcelable{
 
     private int enderecoid;
     private String cep;
@@ -25,6 +28,30 @@ public class Endereco {
         this.numero = numero;
         this.complemento = complemento;
     }
+
+    protected Endereco(Parcel in) {
+        enderecoid = in.readInt();
+        cep = in.readString();
+        pais = in.readString();
+        estado = in.readString();
+        cidade = in.readString();
+        bairro = in.readString();
+        rua = in.readString();
+        numero = in.readString();
+        complemento = in.readString();
+    }
+
+    public static final Creator<Endereco> CREATOR = new Creator<Endereco>() {
+        @Override
+        public Endereco createFromParcel(Parcel in) {
+            return new Endereco(in);
+        }
+
+        @Override
+        public Endereco[] newArray(int size) {
+            return new Endereco[size];
+        }
+    };
 
     public int getEnderecoid() {
         return enderecoid;
@@ -98,4 +125,21 @@ public class Endereco {
         this.complemento = complemento;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(enderecoid);
+        parcel.writeString(cep);
+        parcel.writeString(pais);
+        parcel.writeString(estado);
+        parcel.writeString(cidade);
+        parcel.writeString(bairro);
+        parcel.writeString(rua);
+        parcel.writeString(numero);
+        parcel.writeString(complemento);
+    }
 }

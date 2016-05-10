@@ -1,9 +1,12 @@
 package clientefeedback.aplicacaocliente.Models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Alexandre on 14/04/2016.
  */
-public class Avaliacao {
+public class Avaliacao implements Parcelable {
 
     private int avaliacaoid;
     private int avaliadoid;
@@ -11,6 +14,27 @@ public class Avaliacao {
     private int nota;
     private String descricao;
     private String tipoAvalicao;
+
+    protected Avaliacao(Parcel in) {
+        avaliacaoid = in.readInt();
+        avaliadoid = in.readInt();
+        pessoaid = in.readInt();
+        nota = in.readInt();
+        descricao = in.readString();
+        tipoAvalicao = in.readString();
+    }
+
+    public static final Creator<Avaliacao> CREATOR = new Creator<Avaliacao>() {
+        @Override
+        public Avaliacao createFromParcel(Parcel in) {
+            return new Avaliacao(in);
+        }
+
+        @Override
+        public Avaliacao[] newArray(int size) {
+            return new Avaliacao[size];
+        }
+    };
 
     public int getAvaliacaoid() {
         return avaliacaoid;
@@ -58,6 +82,21 @@ public class Avaliacao {
 
     public void setTipoAvalicao(String tipoAvalicao) {
         this.tipoAvalicao = tipoAvalicao;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(avaliacaoid);
+        parcel.writeInt(avaliadoid);
+        parcel.writeInt(pessoaid);
+        parcel.writeInt(nota);
+        parcel.writeString(descricao);
+        parcel.writeString(tipoAvalicao);
     }
 }
 
