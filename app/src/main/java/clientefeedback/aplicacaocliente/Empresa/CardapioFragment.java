@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import clientefeedback.aplicacaocliente.MainFragment;
+import clientefeedback.aplicacaocliente.Produto.ProdutoFragment;
 import clientefeedback.aplicacaocliente.R;
 import clientefeedback.aplicacaocliente.TabPagerItem;
 import clientefeedback.aplicacaocliente.ViewPagerAdapter;

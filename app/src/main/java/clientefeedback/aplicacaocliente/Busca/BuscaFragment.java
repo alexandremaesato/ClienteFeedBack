@@ -1,5 +1,7 @@
 package clientefeedback.aplicacaocliente.Busca;
 
+
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -63,18 +65,17 @@ public class BuscaFragment extends Fragment implements Transaction, AdapterView.
     private Button botaoTeste;
     Fragment mFragment = null;
     FragmentManager mFragmentManager = this.getFragmentManager();
+    Application application = null;
 
-    public static BuscaFragment newInstance(String text){
-        BuscaFragment mFragment = new BuscaFragment();
-        Bundle mBundle = new Bundle();
-        mBundle.putString(TEXT_FRAGMENT, text);
-        mFragment.setArguments(mBundle);
+//    public static BuscaFragment newInstance(String text){
+//        BuscaFragment mFragment = new BuscaFragment(this);
+//        Bundle mBundle = new Bundle();
+//        mBundle.putString(TEXT_FRAGMENT, text);
+//        mFragment.setArguments(mBundle);
+//
+//        return mFragment;
+//    }
 
-        return mFragment;
-    }
-    public  BuscaFragment(){
-
-    }
     public BuscaFragment (FragmentManager f){
         this.f = f;
     }

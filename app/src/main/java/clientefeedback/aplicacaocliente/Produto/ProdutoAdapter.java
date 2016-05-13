@@ -1,8 +1,6 @@
-package clientefeedback.aplicacaocliente.Empresa;
+package clientefeedback.aplicacaocliente.Produto;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +10,14 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
 import clientefeedback.aplicacaocliente.Interfaces.RecyclerViewOnClickListenerHack;
-import clientefeedback.aplicacaocliente.Models.Empresa;
-import clientefeedback.aplicacaocliente.Models.ImageHelper;
 import clientefeedback.aplicacaocliente.Models.Produto;
 import clientefeedback.aplicacaocliente.R;
+import clientefeedback.aplicacaocliente.Services.Url;
 
 /**
  * Created by Alexandre on 04/05/2016.
@@ -29,6 +30,7 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.MyViewHo
     private float scale;
     private int width;
     private int height;
+    private ImageLoader imageLoader;
 
     public ProdutoAdapter(Context c, List<Produto> l) {
         mContext = c;
@@ -38,6 +40,18 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.MyViewHo
         scale = mContext.getResources().getDisplayMetrics().density;
         width = mContext.getResources().getDisplayMetrics().widthPixels - (int)(14 * scale + 0.5f);
         height = (width / 16) * 9;
+
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(mContext)
+                .threadPoolSize(5) // default
+                .denyCacheImageMultipleSizesInMemory()
+                .memoryCache(new LruMemoryCache(2 * 1024 * 1024))
+                .memoryCacheSize(2 * 1024 * 1024)
+                .diskCacheSize(50 * 1024 * 1024)
+                .diskCacheFileCount(100)
+                .writeDebugLogs()
+                .build();
+        imageLoader = ImageLoader.getInstance();
+        imageLoader.init(config);
     }
 
     @Override
@@ -51,6 +65,13 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.MyViewHo
     public void onBindViewHolder(MyViewHolder holder, int position) {
         holder.tvNome.setText(mList.get(position).getNomeProduto());
         holder.tvDescricao.setText(mList.get(position).getDescricao());
+
+        mList.get(position).getImagemPerfil().getCaminho();
+        String url = Url.IP+"ServidorAplicativo/images/teste_1.jpg";
+        ImageView iv = holder.ivProduto;
+
+        imageLoader.displayImage(url, iv);
+
 
 //        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), mList.get(position).getPhoto());
 //        bitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
@@ -83,12 +104,15 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.MyViewHo
         public TextView tvNome;
         public TextView tvDescricao;
 
+
         public MyViewHolder(View itemView) {
             super(itemView);
 
             ivProduto = (ImageView) itemView.findViewById(R.id.iv_produto);
             tvNome = (TextView) itemView.findViewById(R.id.tv_nome);
             tvDescricao = (TextView) itemView.findViewById(R.id.tv_descricao);
+            ivProduto = (ImageView) itemView.findViewById(R.id.iv_produto);
+
 
             itemView.setOnClickListener(this);
         }

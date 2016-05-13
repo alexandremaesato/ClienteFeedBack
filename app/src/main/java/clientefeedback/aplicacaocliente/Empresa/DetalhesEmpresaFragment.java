@@ -1,15 +1,20 @@
 package clientefeedback.aplicacaocliente.Empresa;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -40,6 +45,7 @@ public class DetalhesEmpresaFragment extends Fragment{
     TextView endereco;
     TextView telefone;
     TextView descricao;
+    ImageView imagemPerfil;
 
     public static DetalhesEmpresaFragment newInstance(String text){
         DetalhesEmpresaFragment mFragment = new DetalhesEmpresaFragment();
@@ -92,8 +98,8 @@ public class DetalhesEmpresaFragment extends Fragment{
         telefone = (TextView)rootView.findViewById(R.id.telefone);
         telefone.setText(tel);
 
-
-
+        imagemPerfil = (ImageView)rootView.findViewById(R.id.imagemPerfil);
+        imagemPerfil.setImageBitmap(getImageFromBase64(empresa.getImagensOficiais().get(0).getImg()));
 
         return rootView;
     }
@@ -120,5 +126,10 @@ public class DetalhesEmpresaFragment extends Fragment{
 //            mSlidingTabLayout.setElevation(15);
 //        }
 //        mSlidingTabLayout.setupWithViewPager(mViewPager);
+    }
+
+    public Bitmap getImageFromBase64(String img){
+        byte[] decodedString = Base64.decode(img, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
     }
 }

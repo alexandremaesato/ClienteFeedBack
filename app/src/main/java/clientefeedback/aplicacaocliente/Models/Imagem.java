@@ -17,6 +17,7 @@ public class Imagem implements Parcelable{
     private int tipoImagem;
     private String img;
     private String nomeImagem;
+    private String caminho;
     private String descricao;
     private int itemid;
     private int pessoaid;
@@ -31,6 +32,7 @@ public class Imagem implements Parcelable{
         img = in.readString();
         nomeImagem = in.readString();
         descricao = in.readString();
+        caminho = in.readString();
         itemid = in.readInt();
         pessoaid = in.readInt();
     }
@@ -46,6 +48,14 @@ public class Imagem implements Parcelable{
             return new Imagem[size];
         }
     };
+
+    public String getCaminho() {
+        return caminho;
+    }
+
+    public void setCaminho(String caminho) {
+        this.caminho = caminho;
+    }
 
     public String getNomeImagem() {
         return nomeImagem;
@@ -131,6 +141,7 @@ public class Imagem implements Parcelable{
         parcel.writeString(img);
         parcel.writeString(nomeImagem);
         parcel.writeString(descricao);
+        parcel.writeString(caminho);
         parcel.writeInt(itemid);
         parcel.writeInt(pessoaid);
     }

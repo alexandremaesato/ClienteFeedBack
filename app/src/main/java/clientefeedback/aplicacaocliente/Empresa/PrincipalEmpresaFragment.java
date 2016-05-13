@@ -53,8 +53,7 @@ public class PrincipalEmpresaFragment extends Fragment{
     boolean notTrue = false;
     Fragment f;
 
-
-
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

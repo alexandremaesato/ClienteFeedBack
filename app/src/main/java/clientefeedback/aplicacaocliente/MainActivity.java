@@ -1,6 +1,7 @@
 package clientefeedback.aplicacaocliente;
 
 
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity
     ProgressBar progressBar;
     private static final Object TAG = new Object();
     RequestQueue mQueue;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,4 +1,4 @@
-package clientefeedback.aplicacaocliente.Empresa;
+package clientefeedback.aplicacaocliente.Produto;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -20,10 +20,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import clientefeedback.aplicacaocliente.Adapters.EmpresaAdapter;
+import clientefeedback.aplicacaocliente.Empresa.CadastrarEmpresaActivity;
 import clientefeedback.aplicacaocliente.Interfaces.RecyclerViewOnClickListenerHack;
 import clientefeedback.aplicacaocliente.Models.Empresa;
 import clientefeedback.aplicacaocliente.Models.Produto;
@@ -40,6 +39,7 @@ public class ProdutoFragment extends Fragment implements RecyclerViewOnClickList
     private RecyclerView mRecyclerView;
     private List<Produto> mList;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private Empresa empresa;
 
     public static ProdutoFragment newInstance(String text){
         ProdutoFragment mFragment = new ProdutoFragment();
@@ -48,6 +48,16 @@ public class ProdutoFragment extends Fragment implements RecyclerViewOnClickList
         mFragment.setArguments(mBundle);
         return mFragment;
     }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            empresa = bundle.getParcelable("empresa");
+        }
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -187,36 +197,37 @@ public class ProdutoFragment extends Fragment implements RecyclerViewOnClickList
     };
 
     public List<Produto> getSetProdutoList(int qtd){
-        String[] nome = new String[]{"TESTE 1", "TESTE 2", "TESTE 3", "TESTE 4", "TESTE 5", "TESTE 6"};
-        String[] descricao = new String[]{"TESTE TESTE 1", "TESTE TESTE 2", "TESTE TESTE 3", "TESTE TESTE 4", "TESTE TESTE 5", "TESTE TESTE 6"};
-//        int[] categories = new int[]{2, 1, 2, 1, 1, 4, 3, 2, 4, 1};
-        int[] photos = new int[]{R.drawable.teste_1, R.drawable.teste_2, R.drawable.teste_3, R.drawable.teste_4, R.drawable.teste_5, R.drawable.teste_6};
-//        String[] urlPhotos = new String[]{"gallardo.jpg", "vyron.jpg", "corvette.jpg", "paganni_zonda.jpg", "porsche_911.jpg", "bmw_720.jpg", "db77.jpg", "mustang.jpg", "camaro.jpg", "ct6.jpg"};
-//        String description = "Lorem Ipsum é simplesmente uma simulação de texto da indústria tipográfica e de impressos, e vem sendo utilizado desde o século XVI, quando um impressor desconhecido pegou uma bandeja de tipos e os embaralhou para fazer um livro de modelos de tipos. Lorem Ipsum sobreviveu não só a cinco séculos, como também ao salto para a editoração eletrônica, permanecendo essencialmente inalterado. Se popularizou na década de 60, quando a Letraset lançou decalques contendo passagens de Lorem Ipsum, e mais recentemente quando passou a ser integrado a softwares de editoração eletrônica como Aldus PageMaker.";
-        List<Produto> listAux = new ArrayList<>();
-
-        for(int i = 0; i < qtd; i++){
-            Produto p = new Produto();
-            p.setNomeProduto(nome[i % nome.length]);
-            p.setDescricao(descricao[i % descricao.length]);
-            //p.setPhoto(photos[i % photos.length]);
-//            c.setDescription(description);
-//            c.setCategory( categories[ i % brands.length ] );
-//            c.setTel("33221155");
+//        String[] nome = new String[]{"TESTE 1", "TESTE 2", "TESTE 3", "TESTE 4", "TESTE 5", "TESTE 6"};
+//        String[] descricao = new String[]{"TESTE TESTE 1", "TESTE TESTE 2", "TESTE TESTE 3", "TESTE TESTE 4", "TESTE TESTE 5", "TESTE TESTE 6"};
+////        int[] categories = new int[]{2, 1, 2, 1, 1, 4, 3, 2, 4, 1};
+//        int[] photos = new int[]{R.drawable.teste_1, R.drawable.teste_2, R.drawable.teste_3, R.drawable.teste_4, R.drawable.teste_5, R.drawable.teste_6};
+////        String[] urlPhotos = new String[]{"gallardo.jpg", "vyron.jpg", "corvette.jpg", "paganni_zonda.jpg", "porsche_911.jpg", "bmw_720.jpg", "db77.jpg", "mustang.jpg", "camaro.jpg", "ct6.jpg"};
+////        String description = "Lorem Ipsum é simplesmente uma simulação de texto da indústria tipográfica e de impressos, e vem sendo utilizado desde o século XVI, quando um impressor desconhecido pegou uma bandeja de tipos e os embaralhou para fazer um livro de modelos de tipos. Lorem Ipsum sobreviveu não só a cinco séculos, como também ao salto para a editoração eletrônica, permanecendo essencialmente inalterado. Se popularizou na década de 60, quando a Letraset lançou decalques contendo passagens de Lorem Ipsum, e mais recentemente quando passou a ser integrado a softwares de editoração eletrônica como Aldus PageMaker.";
+//        List<Produto> listAux = new ArrayList<>();
 //
-//            if(category != 0 && c.getCategory() != category){
-//                continue;
-//            }
-            listAux.add(p);
-        }
-        return(listAux);
+//        for(int i = 0; i < qtd; i++){
+//            Produto p = new Produto();
+//            p.setNomeProduto(nome[i % nome.length]);
+//            p.setDescricao(descricao[i % descricao.length]);
+//            //p.setPhoto(photos[i % photos.length]);
+////            c.setDescription(description);
+////            c.setCategory( categories[ i % brands.length ] );
+////            c.setTel("33221155");
+////
+////            if(category != 0 && c.getCategory() != category){
+////                continue;
+////            }
+//            listAux.add(p);
+//        }
+//        return(listAux);
+        return empresa.getProdutos();
     }
 
     @Override
     public void onClickListener(View view, int position) {
         Toast.makeText(getActivity(), "Position: "+position, Toast.LENGTH_SHORT).show();
         ProdutoAdapter adapter = (ProdutoAdapter) mRecyclerView.getAdapter();
-        adapter.removeListItem(position);
+        //adapter.removeListItem(position);
     }
 
     @Override
