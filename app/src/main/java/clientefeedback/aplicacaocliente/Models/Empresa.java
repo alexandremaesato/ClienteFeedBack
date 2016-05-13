@@ -197,6 +197,10 @@ public class Empresa implements Parcelable{
         this.qtdeAvaliacoes = qtdeAvaliacoes;
     }
 
+    public boolean produtosIsEmpty(){
+        return produtos.isEmpty();
+    }
+
     public Map empresa(){
         HashMap<String,Object> empresa = new HashMap<String,Object>();
 

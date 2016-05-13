@@ -51,7 +51,7 @@ public class PrincipalEmpresaFragment extends Fragment{
     private Empresa empresa;
     Bundle bundle = new Bundle();
     boolean notTrue = false;
-    Fragment f;
+
 
     
     @Override
@@ -65,14 +65,20 @@ public class PrincipalEmpresaFragment extends Fragment{
     }
 
     private void createTabPagerItem(){
-
-        f = DetalhesEmpresaFragment.newInstance("empresa");
         Intent intent = new Intent();
         intent.putExtras(bundle);
-        f.setArguments(bundle);
-        mTabs.add(new TabPagerItem("Detalhes", f));
-        mTabs.add(new TabPagerItem("Cardápio", CardapioFragment.newInstance("Cardápio")));
-        mTabs.add(new TabPagerItem("Programação", MainFragment.newInstance("Programação")));
+
+        Fragment detalhes = DetalhesEmpresaFragment.newInstance("empresa");
+        detalhes.setArguments(bundle);
+        mTabs.add(new TabPagerItem("Detalhes", detalhes));
+
+        Fragment cardapio = CardapioFragment.newInstance("cardapio");
+        cardapio.setArguments(bundle);
+        mTabs.add(new TabPagerItem("Cardápio", cardapio));
+
+        Fragment programacao = MainFragment.newInstance("programacao");
+        programacao.setArguments(bundle);
+        mTabs.add(new TabPagerItem("Programação", programacao));
     }
 
     @Override

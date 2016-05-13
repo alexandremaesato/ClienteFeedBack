@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import clientefeedback.aplicacaocliente.MainFragment;
+import clientefeedback.aplicacaocliente.Models.Empresa;
 import clientefeedback.aplicacaocliente.Produto.ProdutoFragment;
 import clientefeedback.aplicacaocliente.R;
 import clientefeedback.aplicacaocliente.TabPagerItem;
@@ -26,6 +27,8 @@ public class CardapioFragment extends Fragment{
 
         private List<TabPagerItem> mTabs = new ArrayList<>();
         private static final String TEXT_FRAGMENT = "TEXT_FRAGMENT";
+        private Empresa empresa;
+        private Bundle bundle;
 
         public static CardapioFragment newInstance(String text){
             CardapioFragment mFragment = new CardapioFragment();
@@ -38,20 +41,21 @@ public class CardapioFragment extends Fragment{
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+            bundle = this.getArguments();
+            if (bundle != null) {
+                empresa = bundle.getParcelable("empresa");
+            }
             createTabPagerItem();
         }
 
         private void createTabPagerItem(){
-//        mTabs.add(new TabPagerItem("Detalhes", MainFragment.newInstance("Detalhes")));
-//        mTabs.add(new TabPagerItem("Cardápio", MainFragment.newInstance("Cardápio")));
-//        mTabs.add(new TabPagerItem("Programação", MainFragment.newInstance("Programação")));
+            Fragment cardapio = ProdutoFragment.newInstance("bebidas");
+            cardapio.setArguments(bundle);
+            mTabs.add(new TabPagerItem("Bebidas", cardapio));
+
             mTabs.add(new TabPagerItem("Hamburguers", MainFragment.newInstance("Hamburguers")));
-            mTabs.add(new TabPagerItem("Bebidas", ProdutoFragment.newInstance("Bebidas")));
             mTabs.add(new TabPagerItem("Petiscos", MainFragment.newInstance("Petiscos")));
             mTabs.add(new TabPagerItem("Sobremesas", MainFragment.newInstance("Sobremesas")));
-//        TabPagerItem t = new TabPagerItem("teste", MainFragment.newInstance("teste"));
-
-
         }
 
         @Override

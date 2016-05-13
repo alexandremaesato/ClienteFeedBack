@@ -64,70 +64,72 @@ public class ProdutoFragment extends Fragment implements RecyclerViewOnClickList
                              Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        if(!empresa.produtosIsEmpty()) {
+            mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rv_list);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rv_list);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                LinearLayoutManager llm = (LinearLayoutManager) mRecyclerView.getLayoutManager();
-                ProdutoAdapter adapter = (ProdutoAdapter) mRecyclerView.getAdapter();
-
-                if(mList.size() == llm.findLastCompletelyVisibleItemPosition() + 1){
-                    List<Produto> listAux = getSetProdutoList(5);
-
-                    for(int i = 0; i < listAux.size(); i++){
-                        adapter.addListItem( listAux.get(i), mList.size() );
-                    }
+            mRecyclerView.setHasFixedSize(true);
+            mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
                 }
-            }
-        });
 
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(llm);
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
 
-        mList = getSetProdutoList(6);
-        ProdutoAdapter adapter = new ProdutoAdapter(getActivity(), mList);
-        adapter.setRecyclerViewOnClickListenerHack(this);
-        mRecyclerView.setAdapter(adapter);
-
-        mSwipeRefreshLayout =(SwipeRefreshLayout) rootView.findViewById(R.id.srl_swipe);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-
-                if(ConnectionVerify.verifyConnection(getActivity())){
+                    LinearLayoutManager llm = (LinearLayoutManager) mRecyclerView.getLayoutManager();
                     ProdutoAdapter adapter = (ProdutoAdapter) mRecyclerView.getAdapter();
-                    List<Produto> listAux = getSetProdutoList(2);
-                    for(int i = 0; i < listAux.size(); i++){
-                        adapter.addListItem( listAux.get(i), 0 );
-                        mRecyclerView.getLayoutManager().smoothScrollToPosition(mRecyclerView, null, 0);
+
+                    if (mList.size() == llm.findLastCompletelyVisibleItemPosition() + 1) {
+                        List<Produto> listAux = getSetProdutoList(5);
+
+                        for (int i = 0; i < listAux.size(); i++) {
+                            adapter.addListItem(listAux.get(i), mList.size());
+                        }
                     }
-                    mSwipeRefreshLayout.setRefreshing(false);
-                } else{
-                    mSwipeRefreshLayout.setRefreshing(false);
-                    Snackbar snackbar = Snackbar
-                            .make(rootView, R.string.connection_swipe, Snackbar.LENGTH_INDEFINITE)
-                            .setAction(R.string.connect, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    Intent it = new Intent(Settings.ACTION_WIFI_SETTINGS);
-                                    startActivity(it);
-                                }
-                            });
-                    snackbar.setActionTextColor(Color.YELLOW);
-                    snackbar.show();
                 }
-            }
-        });
+            });
+
+            LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+            llm.setOrientation(LinearLayoutManager.VERTICAL);
+            mRecyclerView.setLayoutManager(llm);
+
+            mList = getSetProdutoList(6);
+            ProdutoAdapter adapter = new ProdutoAdapter(getActivity(), mList);
+            adapter.setRecyclerViewOnClickListenerHack(this);
+            mRecyclerView.setAdapter(adapter);
+
+            mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.srl_swipe);
+            mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+
+                    if (ConnectionVerify.verifyConnection(getActivity())) {
+                        ProdutoAdapter adapter = (ProdutoAdapter) mRecyclerView.getAdapter();
+                        List<Produto> listAux = getSetProdutoList(2);
+                        for (int i = 0; i < listAux.size(); i++) {
+                            adapter.addListItem(listAux.get(i), 0);
+                            mRecyclerView.getLayoutManager().smoothScrollToPosition(mRecyclerView, null, 0);
+                        }
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    } else {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        Snackbar snackbar = Snackbar
+                                .make(rootView, R.string.connection_swipe, Snackbar.LENGTH_INDEFINITE)
+                                .setAction(R.string.connect, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Intent it = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                                        startActivity(it);
+                                    }
+                                });
+                        snackbar.setActionTextColor(Color.YELLOW);
+                        snackbar.show();
+                    }
+                }
+            });
+        }
 
         rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT ));
         return rootView;
@@ -197,30 +199,9 @@ public class ProdutoFragment extends Fragment implements RecyclerViewOnClickList
     };
 
     public List<Produto> getSetProdutoList(int qtd){
-//        String[] nome = new String[]{"TESTE 1", "TESTE 2", "TESTE 3", "TESTE 4", "TESTE 5", "TESTE 6"};
-//        String[] descricao = new String[]{"TESTE TESTE 1", "TESTE TESTE 2", "TESTE TESTE 3", "TESTE TESTE 4", "TESTE TESTE 5", "TESTE TESTE 6"};
-////        int[] categories = new int[]{2, 1, 2, 1, 1, 4, 3, 2, 4, 1};
-//        int[] photos = new int[]{R.drawable.teste_1, R.drawable.teste_2, R.drawable.teste_3, R.drawable.teste_4, R.drawable.teste_5, R.drawable.teste_6};
-////        String[] urlPhotos = new String[]{"gallardo.jpg", "vyron.jpg", "corvette.jpg", "paganni_zonda.jpg", "porsche_911.jpg", "bmw_720.jpg", "db77.jpg", "mustang.jpg", "camaro.jpg", "ct6.jpg"};
-////        String description = "Lorem Ipsum é simplesmente uma simulação de texto da indústria tipográfica e de impressos, e vem sendo utilizado desde o século XVI, quando um impressor desconhecido pegou uma bandeja de tipos e os embaralhou para fazer um livro de modelos de tipos. Lorem Ipsum sobreviveu não só a cinco séculos, como também ao salto para a editoração eletrônica, permanecendo essencialmente inalterado. Se popularizou na década de 60, quando a Letraset lançou decalques contendo passagens de Lorem Ipsum, e mais recentemente quando passou a ser integrado a softwares de editoração eletrônica como Aldus PageMaker.";
-//        List<Produto> listAux = new ArrayList<>();
-//
-//        for(int i = 0; i < qtd; i++){
-//            Produto p = new Produto();
-//            p.setNomeProduto(nome[i % nome.length]);
-//            p.setDescricao(descricao[i % descricao.length]);
-//            //p.setPhoto(photos[i % photos.length]);
-////            c.setDescription(description);
-////            c.setCategory( categories[ i % brands.length ] );
-////            c.setTel("33221155");
-////
-////            if(category != 0 && c.getCategory() != category){
-////                continue;
-////            }
-//            listAux.add(p);
-//        }
-//        return(listAux);
-        return empresa.getProdutos();
+        if (!empresa.produtosIsEmpty())
+            return empresa.getProdutos();
+        return null;
     }
 
     @Override
