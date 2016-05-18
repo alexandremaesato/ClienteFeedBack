@@ -54,6 +54,7 @@ public class EmpresaAdapter extends RecyclerView.Adapter<EmpresaAdapter.MyViewHo
         Bitmap bitmap = BitmapFactory.decodeResource( mContext.getResources(), mList.get(position).getPhoto());
         bitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
 
+        //Metodo de Redimentsionamento
         bitmap = ImageHelper.getRoundedCornerBitmap(mContext, bitmap, 4, width, height, false, false, true, true);
         holder.ivEmpresa.setImageBitmap(bitmap);
     }

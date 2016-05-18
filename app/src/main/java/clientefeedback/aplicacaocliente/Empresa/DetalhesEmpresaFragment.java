@@ -19,11 +19,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import java.util.ArrayList;
 import java.util.List;
 import clientefeedback.aplicacaocliente.MainFragment;
 import clientefeedback.aplicacaocliente.Models.Empresa;
 import clientefeedback.aplicacaocliente.R;
+import clientefeedback.aplicacaocliente.Services.ImageLoaderCustom;
+import clientefeedback.aplicacaocliente.Services.Url;
 import clientefeedback.aplicacaocliente.TabPagerItem;
 import clientefeedback.aplicacaocliente.ViewPagerAdapter;
 import clientefeedback.aplicacaocliente.ViewPagerFragment;
@@ -46,6 +50,7 @@ public class DetalhesEmpresaFragment extends Fragment{
     TextView telefone;
     TextView descricao;
     ImageView imagemPerfil;
+    ImageLoader imageLoader;
 
     public static DetalhesEmpresaFragment newInstance(String text){
         DetalhesEmpresaFragment mFragment = new DetalhesEmpresaFragment();
@@ -58,6 +63,7 @@ public class DetalhesEmpresaFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        imageLoader = ImageLoaderCustom.getImageloader(getContext());
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             empresa = bundle.getParcelable("empresa");
@@ -99,7 +105,12 @@ public class DetalhesEmpresaFragment extends Fragment{
         telefone.setText(tel);
 
         imagemPerfil = (ImageView)rootView.findViewById(R.id.imagemPerfil);
-        imagemPerfil.setImageBitmap(getImageFromBase64(empresa.getImagensOficiais().get(0).getImg()));
+        String url = null;
+        if(empresa.hasImagemPerfil()) {
+            url = Url.IP + empresa.getImagemPerfil().getCaminho()+empresa.getImagemPerfil().getNomeImagem();
+        }
+
+        imageLoader.displayImage(url, imagemPerfil);
 
         return rootView;
     }
@@ -113,19 +124,6 @@ public class DetalhesEmpresaFragment extends Fragment{
 
             }
         });
-//        ViewPager mViewPager = (ViewPager) view.findViewById(R.id.viewPager);
-//
-//        mViewPager.setOffscreenPageLimit(mTabs.size());
-//        mViewPager.setAdapter(new ViewPagerAdapter(getChildFragmentManager(), mTabs));
-//
-//        TabLayout mSlidingTabLayout = (TabLayout) view.findViewById(R.id.tabLayout);
-//
-//
-//
-//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            mSlidingTabLayout.setElevation(15);
-//        }
-//        mSlidingTabLayout.setupWithViewPager(mViewPager);
     }
 
     public Bitmap getImageFromBase64(String img){

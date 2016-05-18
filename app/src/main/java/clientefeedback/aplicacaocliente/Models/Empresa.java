@@ -201,6 +201,13 @@ public class Empresa implements Parcelable{
         return produtos.isEmpty();
     }
 
+    public boolean hasImagemPerfil() {
+        if(imagemPerfil != null){
+            return true;
+        }
+        return false;
+    }
+
     public Map empresa(){
         HashMap<String,Object> empresa = new HashMap<String,Object>();
 

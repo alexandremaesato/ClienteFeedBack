@@ -17,41 +17,47 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="180dp"
             android:id="@+id/iv_empresa"
             android:layout_alignParentTop="true"
-            android:src="@null" />
+            android:src="@drawable/ic_menu_camera"
+            android:adjustViewBounds="false"
+            android:scaleType="centerCrop" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <Button
-                android:id="@+id/btn_favorito"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_heart_outline_grey600_24dp"
-                android:text="@string/favoritar"
-                android:textColor="@color/colorSecondText"
-                android:onClick="setFavorito"/>
+            <ToggleButton
+                android:id="@+id/btnFavorite"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_margin="5dp"
+                android:textOn=""
+                android:textOff=""
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:layout_centerVertical="true"
+                android:background="@drawable/favorite" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_weight="1" />
 
-            <TextView
-                android:textColor="@color/black"
-                android:id="@+id/tv_avaliacao"
+            <RatingBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/ratingBar2"
+                android:max="5"
+                android:rating="3"
+                android:elevation="4dp"
+                android:background="#fff"
+                style="?android:attr/ratingBarStyleSmall"
+                android:layout_alignBottom="@+id/iv_empresa"
                 android:layout_alignParentRight="true"
-                android:textSize="24sp"
-                android:background="@drawable/rate_shape"
-                android:padding="5dp"
-                android:text="9.5"
-                android:textStyle="bold" />
+                android:layout_alignParentEnd="true" />
 
         </LinearLayout>
 

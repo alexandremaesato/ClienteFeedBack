@@ -32,13 +32,15 @@ public class CarregaEmpresaRequest implements Transaction{
     Empresa empresa;
     Bundle eBundle = new Bundle();
     Intent intent;
+    Integer idEmpresa;
 
     Fragment mFragment = new PrincipalEmpresaFragment();
 
-    public CarregaEmpresaRequest(View v,Context c, FragmentManager fm){
+    public CarregaEmpresaRequest(View v,Context c, FragmentManager fm, Integer idEmpresa){
         this.fragmentManager = fm;
         this.v = v;
         this.c = c;
+        this.idEmpresa = idEmpresa;
         (new PrincipalEmpresaRequest(c, this)).execute();
     }
 
@@ -70,6 +72,6 @@ public class CarregaEmpresaRequest implements Transaction{
 
     @Override
     public RequestData getRequestData() {
-        return( new RequestData(Url.getUrl()+"Empresa/getEmpresa/1", "", "") );
+        return( new RequestData(Url.getUrl()+"Empresa/getEmpresa/"+idEmpresa, "", "") );
     }
 }

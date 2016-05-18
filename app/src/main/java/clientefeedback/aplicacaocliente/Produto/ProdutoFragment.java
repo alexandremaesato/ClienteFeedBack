@@ -95,7 +95,7 @@ public class ProdutoFragment extends Fragment implements RecyclerViewOnClickList
             llm.setOrientation(LinearLayoutManager.VERTICAL);
             mRecyclerView.setLayoutManager(llm);
 
-            mList = getSetProdutoList(6);
+            mList = getSetProdutoList(5);
             ProdutoAdapter adapter = new ProdutoAdapter(getActivity(), mList);
             adapter.setRecyclerViewOnClickListenerHack(this);
             mRecyclerView.setAdapter(adapter);
@@ -199,8 +199,17 @@ public class ProdutoFragment extends Fragment implements RecyclerViewOnClickList
     };
 
     public List<Produto> getSetProdutoList(int qtd){
-        if (!empresa.produtosIsEmpty())
-            return empresa.getProdutos();
+        if (!empresa.produtosIsEmpty()) {
+            List<Produto> produtos = new ArrayList<Produto>();
+            for(int i=0; i<qtd; i++) {
+                if(empresa.getProdutos().size() > i) {
+                    produtos.add(empresa.getProdutos().get(i));
+                }else{
+                    produtos.add(empresa.getProdutos().get(2));
+                }
+            }
+            return produtos;
+        }
         return null;
     }
 

@@ -129,6 +129,10 @@ public class Imagem implements Parcelable{
         return bitmap;
     }
 
+    public boolean hasImagem(){
+        return !nomeImagem.isEmpty();
+    }
+
     @Override
     public int describeContents() {
         return 0;

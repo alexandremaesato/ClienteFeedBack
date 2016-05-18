@@ -18,12 +18,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent">
+
+        </FrameLayout>
+
+        <ImageView
+            android:layout_width="380dp"
+            android:layout_height="180dp"
             android:id="@+id/iv_empresa"
             android:layout_alignParentTop="true"
-            android:src="@null"/>
+            android:src="@drawable/ic_image_black_24dp"/>
 
         <TextView
             android:textColor="@color/colorPrimarytext"
@@ -33,7 +39,8 @@
             android:layout_height="wrap_content"
             android:paddingTop="24dp"
             android:paddingLeft="16dp"
-            android:textSize="24sp" />
+            android:textSize="24sp"
+            android:text="Nome" />
 
         <TextView
             android:textColor="@color/colorSecondText"
@@ -43,7 +50,8 @@
             android:layout_height="wrap_content"
             android:paddingRight="16dp"
             android:paddingBottom="24dp"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:text="Descricao" />
 
     </RelativeLayout>
 
