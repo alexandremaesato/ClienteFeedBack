@@ -17,6 +17,9 @@
     <string name="password_required">Senha Obrigatório</string>
     <string name="email_required_size_invalid">Seu email deve ter entre 4 e 15 caracteres!</string>
     <string name="password_required_size_invalid">Sua senha deve ter entre 6 e 15 caracteres!</string>
+    <string name="cadastro_efetuado_sucesso">Cadastro efetuado com sucesso!</string>
+    <string name="login_efetuado_sucesso">Login efetuado com sucesso!</string>
+
 
     <!-- Tela Cadastrar Empresa-->
     <string name="cadastro_empresa">Cadastro de Empresa</string>
@@ -62,6 +65,7 @@
     <string name="title_activity_logindemo">Sign in</string>
     <string name="save">Salvar</string>
     <string name="favoritar">Favoritar</string>
+    <string name="id_pessoa">idpessoa</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -117,6 +121,10 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- ERROS-->
+    <string name="erro401">Erro de Autenticação</string>
+    <string name="erro401Cadastro">Esse email já está cadastrado!</string>
 
 
 

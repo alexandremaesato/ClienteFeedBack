@@ -55,7 +55,7 @@ import clientefeedback.aplicacaocliente.VolleyConn;
 
 
 public class BuscaFragment extends Fragment implements Transaction,RecyclerViewOnClickListenerHack {
-    static FragmentManager f;
+    static FragmentManager fragmentManager;
     private Context c = getContext();
     private boolean mSearchCheck;
     private static final String TEXT_FRAGMENT = "Busca";
@@ -71,7 +71,7 @@ public class BuscaFragment extends Fragment implements Transaction,RecyclerViewO
 
 
     public BuscaFragment (FragmentManager f){
-        this.f = f;
+        this.fragmentManager = f;
     }
 
     @Override
@@ -294,7 +294,7 @@ public class BuscaFragment extends Fragment implements Transaction,RecyclerViewO
     @Override
     public void onClickListener(View view, int position) {
         BuscaEmpresaAdapter adapter = (BuscaEmpresaAdapter) mRecyclerView.getAdapter();
-        new CarregaEmpresaRequest(view, getContext(), f, (int)adapter.getItemId(position));
+        new CarregaEmpresaRequest(view, getContext(), fragmentManager, (int)adapter.getItemId(position));
     }
 
     @Override

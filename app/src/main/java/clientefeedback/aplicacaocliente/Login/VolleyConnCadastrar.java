@@ -1,10 +1,7 @@
-package clientefeedback.aplicacaocliente;
+package clientefeedback.aplicacaocliente.Login;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.util.Base64;
-import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -16,18 +13,24 @@ import com.android.volley.toolbox.StringRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-import clientefeedback.aplicacaocliente.Models.Empresa;
-import clientefeedback.aplicacaocliente.Services.AutenticacaoHeaders;
+import clientefeedback.aplicacaocliente.CustomApplication;
+import clientefeedback.aplicacaocliente.R;
+import clientefeedback.aplicacaocliente.RequestData;
 import clientefeedback.aplicacaocliente.Services.AutorizacaoRequest;
+import clientefeedback.aplicacaocliente.Services.CadastrarAutenticacaoRequest;
+import clientefeedback.aplicacaocliente.Transaction;
 
-public class VolleyConn {
+/**
+ * Created by Alexandre on 20/05/2016.
+ */
+public class VolleyConnCadastrar {
     private Context c;
     private Transaction transaction;
     private RequestQueue requestQueue;
 
 
 
-    public VolleyConn(Context c, Transaction t){
+    public VolleyConnCadastrar(Context c, Transaction t){
         this.c = c;
         transaction = t;
         requestQueue = ((CustomApplication) ((Activity) c).getApplication()).getRequestQueue();
@@ -41,7 +44,10 @@ public class VolleyConn {
 
 
     private void callByStringRequest(final RequestData requestData){
-        StringRequest request = new AutorizacaoRequest(Request.Method.POST,
+//        HashMap<String,String> hash = (HashMap<String,String>)transaction.getRequestData().getObj();
+//        String login = hash.get("login");
+//        String senha = hash.get("senha");
+        StringRequest request = new CadastrarAutenticacaoRequest(Request.Method.POST,
                 requestData.getUrl(),
                 new Response.Listener<String>() {
                     @Override
@@ -53,9 +59,9 @@ public class VolleyConn {
                     @Override
                     public void onErrorResponse(VolleyError error){
                         String message = "Erro";
-                        if(error.networkResponse != null) {
+                        if(error != null) {
                             if (error.networkResponse.statusCode == 401) {
-                                message = c.getString(R.string.erro401);
+                                message = c.getString(R.string.erro401Cadastro);
                             }
                         }
                         transaction.doAfter(message);
@@ -65,7 +71,7 @@ public class VolleyConn {
             public Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 //params.put("method", requestData.getMethod());
-                //params.put("teste","true");
+                params.put("teste","true");
 
 
                 if(requestData.getObj() != null){
@@ -87,3 +93,5 @@ public class VolleyConn {
 
 
 }
+
+

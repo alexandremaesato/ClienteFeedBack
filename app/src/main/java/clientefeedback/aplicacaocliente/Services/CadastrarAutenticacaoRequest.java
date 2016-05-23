@@ -20,8 +20,7 @@ import clientefeedback.aplicacaocliente.MainActivity;
  * Created by Alexandre on 31/03/2016.
  */
 public class CadastrarAutenticacaoRequest extends StringRequest {
-    String login;
-    String senha;
+
 
     Context c = MainActivity.contextOfApplication();
     GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -32,13 +31,12 @@ public class CadastrarAutenticacaoRequest extends StringRequest {
             .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
             .build();
 
-    public CadastrarAutenticacaoRequest(String login, String senha, int method, String url,
+    public CadastrarAutenticacaoRequest( int method, String url,
                                         Response.Listener<String> listener,
                                         Response.ErrorListener errorListener) {
 
         super(method, url, listener, errorListener);
-        this.login = login;
-        this.senha = senha;
+
     }
 
     public CadastrarAutenticacaoRequest(String url,
@@ -49,8 +47,9 @@ public class CadastrarAutenticacaoRequest extends StringRequest {
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
-        return AutenticacaoHeaders.basicRegister(login, senha);
+        return AutenticacaoHeaders.basicRegister();
     }
+
 
 }
 

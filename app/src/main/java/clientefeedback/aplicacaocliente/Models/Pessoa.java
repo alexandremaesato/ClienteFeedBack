@@ -1,7 +1,12 @@
 package clientefeedback.aplicacaocliente.Models;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import java.sql.Date;
 import java.util.List;
+
+import clientefeedback.aplicacaocliente.R;
 
 /**
  * Created by Guilherme on 26/02/2016.
@@ -115,5 +120,10 @@ public class Pessoa {
 
     public void setListaDesejos(List listaDesejos) {
         this.listaDesejos = listaDesejos;
+    }
+
+    public static String getLoginFromSharedPreferences(Context c){
+        SharedPreferences s = c.getSharedPreferences("account", Context.MODE_PRIVATE);
+        return s.getString(c.getString(R.string.login),"");
     }
 }
