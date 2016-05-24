@@ -13,7 +13,9 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.backends.pipeline.PipelineDraweeController;
@@ -67,7 +69,8 @@ public class EmpresaAdapter extends RecyclerView.Adapter<EmpresaAdapter.MyViewHo
         holder.tvNome.setText(mList.get(position).getNomeEmpresa());
         String local = mList.get(position).getEndereco().getCidade() + "/" + mList.get(position).getEndereco().getEstado();
         holder.tvLocalizacao.setText(local);
-        holder.tvAvaliacao.setText(String.valueOf(mList.get(position).getAvaliacaoNota()));
+        holder.tvAvaliacao.setNumStars(mList.get(position).getAvaliacaoNota());   //setText(String.valueOf(mList.get(position).getAvaliacaoNota()));
+
 
         Uri uri = Uri.parse(Url.IP + "ServidorAplicativo/" + mList.get(position).getImagemPerfil().getCaminho());
 
@@ -106,7 +109,8 @@ public class EmpresaAdapter extends RecyclerView.Adapter<EmpresaAdapter.MyViewHo
         public SimpleDraweeView draweeView;
         public TextView tvNome;
         public TextView tvLocalizacao;
-        public TextView tvAvaliacao;
+        public RatingBar tvAvaliacao;
+//        public ToggleButton favoritos;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -115,7 +119,8 @@ public class EmpresaAdapter extends RecyclerView.Adapter<EmpresaAdapter.MyViewHo
             draweeView = (SimpleDraweeView) itemView.findViewById(R.id.iv_empresa);
             tvNome = (TextView) itemView.findViewById(R.id.tv_nome);
             tvLocalizacao = (TextView) itemView.findViewById(R.id.tv_localizacao);
-            tvAvaliacao = (TextView) itemView.findViewById(R.id.tv_avaliacao);
+            tvAvaliacao = (RatingBar) itemView.findViewById(R.id.ratingBar2);
+//            favoritos = (ToggleButton) itemView.findViewById(R.id.btnFavorite);
 
             itemView.setOnClickListener(this);
         }

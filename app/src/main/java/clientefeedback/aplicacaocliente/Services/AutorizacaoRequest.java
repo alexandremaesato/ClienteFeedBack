@@ -120,10 +120,10 @@ public class AutorizacaoRequest extends StringRequest {
 
         return headerMap;
     }
-    @Override
-    public byte[] getBody() throws AuthFailureError {
-        return getParams().toString().getBytes(Charset.forName("windows-1252"));
-    }
+//    @Override
+//    public byte[] getBody() throws AuthFailureError {
+//        return getParams().toString().getBytes(Charset.forName("windows-1252"));
+//    }
 
 //    @Override
 //    public String getBodyContentType() {

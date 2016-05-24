@@ -14,10 +14,12 @@ import com.google.gson.Gson;
 
 import clientefeedback.aplicacaocliente.Empresa.PrincipalEmpresaFragment;
 import clientefeedback.aplicacaocliente.Empresa.PrincipalEmpresaRequest;
+import clientefeedback.aplicacaocliente.Models.Avaliacao;
 import clientefeedback.aplicacaocliente.Models.Empresa;
 import clientefeedback.aplicacaocliente.R;
 import clientefeedback.aplicacaocliente.RequestData;
 import clientefeedback.aplicacaocliente.Services.Url;
+import clientefeedback.aplicacaocliente.SharedData;
 import clientefeedback.aplicacaocliente.Transaction;
 import clientefeedback.aplicacaocliente.VolleyConn;
 
@@ -30,16 +32,25 @@ public class CarregaEmpresaRequest implements Transaction{
     Context c;
     ProgressBar progressBar;
     Empresa empresa;
+    Avaliacao avaliacao;
     Bundle eBundle = new Bundle();
     Intent intent;
+    Integer idEmpresa;
+    Integer idPessoa;
+    boolean empresaBool = false;
+    boolean avaliacaoBool = false;
 
     Fragment mFragment = new PrincipalEmpresaFragment();
 
-    public CarregaEmpresaRequest(View v,Context c, FragmentManager fm){
+    public CarregaEmpresaRequest(View v,Context c, FragmentManager fm, Integer idEmpresa){
         this.fragmentManager = fm;
         this.v = v;
         this.c = c;
+        this.idEmpresa = idEmpresa;
+        SharedData sd= new SharedData(c);
+        this.idPessoa = sd.getPessoaId();
         (new PrincipalEmpresaRequest(c, this)).execute();
+
     }
 
 
@@ -50,26 +61,55 @@ public class CarregaEmpresaRequest implements Transaction{
 
     @Override
     public void doAfter(String answer) {
-        try{
-            Gson gson = new Gson();
-            empresa = gson.fromJson(answer,Empresa.class);
-            if(empresa != null){
 
-                eBundle.putParcelable("empresa", empresa);
-                mFragment.setArguments(eBundle);
-                fragmentManager.beginTransaction().replace(R.id.conteudo, mFragment).commit();
-            }
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-        finally {
-            //progressBar.setVisibility(View.GONE);
+        Gson gson = new Gson();
+        empresa = gson.fromJson(answer, Empresa.class);
+        if (empresa != null) {
+
+            eBundle.putParcelable("empresa", empresa);
+            mFragment.setArguments(eBundle);
+            empresaBool = true;
+            (new PrincipalEmpresaRequest(c, getTransactionAvaliacao())).execute();
+            beginTransaction();
         }
     }
 
     @Override
     public RequestData getRequestData() {
-        return( new RequestData(Url.getUrl()+"Empresa/getEmpresa/1", "", "") );
+        return( new RequestData(Url.getUrl()+"Empresa/getEmpresa/"+idEmpresa, "", "") );
+    }
+
+    private Transaction getTransactionAvaliacao(){
+        Transaction t = new Transaction() {
+            @Override
+            public void doBefore() {
+
+            }
+
+            @Override
+            public void doAfter(String answer) {
+
+                Gson gson = new Gson();
+                avaliacao = gson.fromJson(answer, Avaliacao.class);
+                if (avaliacao != null) {
+                    eBundle.putParcelable("avaliacao", avaliacao);
+                    mFragment.setArguments(eBundle);
+                    avaliacaoBool = true;
+                    beginTransaction();
+                }
+            }
+
+            @Override
+            public RequestData getRequestData() {
+                return( new RequestData(Url.getUrl()+"avaliacao/getAvaliacao/"+idPessoa+"/"+idEmpresa+"/empresa", "", "") );
+            }
+        };
+        return t;
+    }
+
+    private void beginTransaction(){
+        if(empresaBool && avaliacaoBool) {
+            fragmentManager.beginTransaction().replace(R.id.conteudo, mFragment).commit();
+        }
     }
 }

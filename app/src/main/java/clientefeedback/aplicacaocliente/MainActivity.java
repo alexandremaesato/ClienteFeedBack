@@ -42,16 +42,21 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.google.gson.Gson;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import clientefeedback.aplicacaocliente.Busca.BuscaFragment;
 import clientefeedback.aplicacaocliente.Empresa.CadastrarEmpresaActivity;
 import clientefeedback.aplicacaocliente.Empresa.PrincipalEmpresaFragment;
+import clientefeedback.aplicacaocliente.Login.VolleyConnCadastrar;
 import clientefeedback.aplicacaocliente.Services.AutorizacaoRequest;
 import clientefeedback.aplicacaocliente.Services.CadastrarAutenticacaoRequest;
 import clientefeedback.aplicacaocliente.Services.Url;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener, Transaction {
     android.app.FragmentManager fm = getFragmentManager();
     Fragment mFragment = null;
     FragmentManager mFragmentManager = getSupportFragmentManager();
@@ -62,6 +67,7 @@ public class MainActivity extends AppCompatActivity
     ProgressBar progressBar;
     private static final Object TAG = new Object();
     RequestQueue mQueue;
+    Transaction t;
 
 
     @Override
@@ -75,17 +81,8 @@ public class MainActivity extends AppCompatActivity
         mFragment = MainFragment.newInstance("MAIN");
         mFragmentManager.beginTransaction().replace(R.id.conteudo, mFragment).commit();
         sharedPreferences = getSharedPreferences("account", Context.MODE_PRIVATE);
-        mQueue = Volley.newRequestQueue(getApplicationContext());
+//        mQueue = Volley.newRequestQueue(getApplicationContext());
 
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -93,15 +90,6 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
         navigationViewInit();
-//        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-//        navigationView.setNavigationItemSelectedListener(this);
-//        View header = navigationView.getHeaderView(0);
-//
-//        TextView email = (TextView) header.findViewById(R.id.userEmail);
-//        TextView name = (TextView) header.findViewById(R.id.userName);
-//        ImageView image = (ImageView) header.findViewById(R.id.userImage);
-//        email.setText("alexandremaesato@gmail.com");
-
     }
 
     @Override
@@ -334,70 +322,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void doRequest() {
-        String url = Url.getUrl() + "secured/message";
+        (new VolleyConn(contextOfApplication, this)).execute();
 
-        StringRequest jsonRequet = new AutorizacaoRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-
-                    public void onResponse(String result) {
-                        progressBar.setVisibility(View.GONE);
-                        if ("Accepted".equals(result)) {
-                            String novoLogin = email.getText().toString();
-                            String novaSenha = senha.getText().toString();
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putString(getString(R.string.login), novoLogin);
-                            editor.putString(getString(R.string.password), novaSenha);
-                            editor.commit();
-                            finish();
-                            startActivity(getIntent());
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            public void onErrorResponse(VolleyError error) {
-                progressBar.setVisibility(View.GONE);
-                if (error.networkResponse != null) {
-                    if (error.networkResponse.statusCode == 401) {
-                        Toast.makeText(getApplicationContext(), "Senha ou Usuário incorreto", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(getApplicationContext(), "Erro de conexao", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        jsonRequet.setTag(TAG);
-        mQueue.add(jsonRequet);
     }
 
     private void doRequestCadastrar(String login, String senha){
-        String url = Url.getUrl()+"secured/message";
-
-        StringRequest jsonRequet = new CadastrarAutenticacaoRequest(login, senha, Request.Method.GET, url,
-                new Response.Listener<String>() {
-
-                    public void onResponse(String result) {
-                        progressBar.setVisibility(View.GONE);
-                        if("Accepted".equals(result)){
-                            Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                            startActivity(intent);
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            public void onErrorResponse(VolleyError error) {
-                progressBar.setVisibility(View.GONE);
-                if (error.networkResponse != null) {
-                    if (error.networkResponse.statusCode == 401) {
-                        cleanSharedPreferences();
-                        Toast.makeText(getBaseContext(), "Usuario já está cadastrado", Toast.LENGTH_SHORT).show();
-                    }
-                }else {
-                    cleanSharedPreferences();
-                    Toast.makeText(getBaseContext(), "Erro de conexao", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        jsonRequet.setTag(TAG);
-
-        mQueue.add(jsonRequet);
+        (new VolleyConnCadastrar(contextOfApplication, getTransactionCadastrar(this))).execute();
     }
 
     private void cleanSharedPreferences(){
@@ -429,5 +359,68 @@ public class MainActivity extends AppCompatActivity
 
     public void setFavorito(View v){
         Toast.makeText(this, "Foi para Favoritos", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void doBefore() {
+        progressBar.setVisibility(View.VISIBLE);
+
+
+    }
+
+    @Override
+    public void doAfter(String answer) {
+        if(answer != null) {
+            Gson gson = new Gson();
+            try {
+                String valor = gson.fromJson(answer, String.class);
+                String novoLogin = email.getText().toString();
+                String novaSenha = senha.getText().toString();
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(getString(R.string.login), novoLogin);
+                editor.putString(getString(R.string.password), novaSenha);
+                editor.putString(getString(R.string.id_pessoa), valor);
+                editor.commit();
+                finish();
+                startActivity(getIntent());
+            }catch (Exception e){
+                Toast.makeText(MainActivity.this, answer, Toast.LENGTH_LONG).show();
+                cleanSharedPreferences();
+            }
+        }else {
+            cleanSharedPreferences();
+            Toast.makeText(MainActivity.this, answer, Toast.LENGTH_SHORT).show();
+        }
+        progressBar.setVisibility(View.GONE);
+
+    }
+
+    @Override
+    public RequestData getRequestData() {
+        return new RequestData(Url.getUrl() + "autenticacao/logar", "",new HashMap<String,String>() );
+    }
+
+
+    public Transaction getTransactionCadastrar(final MainActivity m){
+        t = new Transaction() {
+            @Override
+            public void doBefore() {
+//                this.doBefore();
+                m.doBefore();
+
+            }
+
+            @Override
+            public void doAfter(String answer) {
+                m.doAfter(answer);
+            }
+
+            @Override
+            public RequestData getRequestData() {
+
+                return new RequestData(Url.getUrl() + "autenticacao/cadastrar", "",new HashMap<String,String>() );
+            }
+        };
+        return t;
     }
 }

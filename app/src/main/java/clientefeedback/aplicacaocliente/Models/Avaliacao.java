@@ -3,10 +3,17 @@ package clientefeedback.aplicacaocliente.Models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by Alexandre on 14/04/2016.
  */
 public class Avaliacao implements Parcelable {
+
+    //TIPOS DE AVALIACOES
+
+    public static String EMPRESA = "empresa";
 
     private int avaliacaoid;
     private int avaliadoid;
@@ -14,6 +21,10 @@ public class Avaliacao implements Parcelable {
     private int nota;
     private String descricao;
     private String tipoAvalicao;
+
+    public Avaliacao(){
+
+    }
 
     protected Avaliacao(Parcel in) {
         avaliacaoid = in.readInt();

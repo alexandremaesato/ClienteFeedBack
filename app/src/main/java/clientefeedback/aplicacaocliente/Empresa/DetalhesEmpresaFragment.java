@@ -1,5 +1,6 @@
 package clientefeedback.aplicacaocliente.Empresa;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -7,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -15,18 +17,27 @@ import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import clientefeedback.aplicacaocliente.Avaliacao.AvaliacaoDialogFragment;
+import clientefeedback.aplicacaocliente.Avaliacao.RequestAvaliacao;
 import clientefeedback.aplicacaocliente.MainFragment;
+import clientefeedback.aplicacaocliente.Models.Avaliacao;
 import clientefeedback.aplicacaocliente.Models.Empresa;
 import clientefeedback.aplicacaocliente.R;
+import clientefeedback.aplicacaocliente.Services.ImageLoaderCustom;
+import clientefeedback.aplicacaocliente.Services.Url;
+import clientefeedback.aplicacaocliente.SharedData;
 import clientefeedback.aplicacaocliente.TabPagerItem;
-import clientefeedback.aplicacaocliente.ViewPagerAdapter;
-import clientefeedback.aplicacaocliente.ViewPagerFragment;
+
 
 /**
  * Created by Alexandre on 25/04/2016.
@@ -35,6 +46,7 @@ public class DetalhesEmpresaFragment extends Fragment{
     private List<TabPagerItem> mTabs = new ArrayList<>();
     private static final String TEXT_FRAGMENT = "TEXT_FRAGMENT";
     private Empresa empresa;
+    private Avaliacao avaliacao;
     ToggleButton btnFavorite;
     TextView nomeEmpresa;
     TextView avaliacoes;
@@ -46,6 +58,15 @@ public class DetalhesEmpresaFragment extends Fragment{
     TextView telefone;
     TextView descricao;
     ImageView imagemPerfil;
+    TextView avaliar;
+    TextView notaAvaliacao;
+    TextView comentarioAvaliacao;
+    ImageLoader imageLoader;
+
+    LinearLayout areaAvaliacao;
+    ImageButton btnEditarAvaliacao;
+
+
 
     public static DetalhesEmpresaFragment newInstance(String text){
         DetalhesEmpresaFragment mFragment = new DetalhesEmpresaFragment();
@@ -58,9 +79,12 @@ public class DetalhesEmpresaFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        imageLoader = ImageLoaderCustom.getImageloader(getContext());
         Bundle bundle = this.getArguments();
         if (bundle != null) {
+            avaliacao = bundle.getParcelable("avaliacao");
             empresa = bundle.getParcelable("empresa");
+
         }
         createTabPagerItem();
     }
@@ -86,7 +110,15 @@ public class DetalhesEmpresaFragment extends Fragment{
         numAvaliacoes.setText(String.valueOf(empresa.getAvaliacoes().size()));
 
         endereco = (TextView)rootView.findViewById(R.id.endereco);
-        endereco.setText(empresa.getEndereco().getRua()+", "+empresa.getEndereco().getNumero()+", "+empresa.getEndereco().getBairro() );
+        endereco.setText(empresa.getEndereco().getRua() + ", " + empresa.getEndereco().getNumero() + ", " + empresa.getEndereco().getBairro());
+
+        btnEditarAvaliacao = (ImageButton)rootView.findViewById(R.id.btnEditarAvaliacao);
+        btnEditarAvaliacao.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadDialogAvaliacao();
+            }
+        });
 
         String tel = "";
         for(int i=0; i<empresa.getTelefones().size(); i++ ){
@@ -99,7 +131,32 @@ public class DetalhesEmpresaFragment extends Fragment{
         telefone.setText(tel);
 
         imagemPerfil = (ImageView)rootView.findViewById(R.id.imagemPerfil);
-        imagemPerfil.setImageBitmap(getImageFromBase64(empresa.getImagensOficiais().get(0).getImg()));
+        String url = null;
+        if(empresa.hasImagemPerfil()) {
+            url = Url.IP + empresa.getImagemPerfil().getCaminho()+empresa.getImagemPerfil().getNomeImagem();
+        }
+        imageLoader.displayImage(url, imagemPerfil);
+
+        avaliar = (TextView)rootView.findViewById(R.id.tvAvaliar);
+        avaliar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadDialogAvaliacao();
+            }
+        });
+
+        notaAvaliacao = (TextView)rootView.findViewById(R.id.nota);
+        comentarioAvaliacao = (TextView)rootView.findViewById(R.id.comentario);
+
+        areaAvaliacao = (LinearLayout) rootView.findViewById(R.id.areaAvaliacao);
+        areaAvaliacao.setVisibility(View.GONE);
+        avaliar.setVisibility(View.VISIBLE);
+        if(avaliacao.getNota() > 0 || avaliacao.getDescricao()!="") {
+            areaAvaliacao.setVisibility(View.VISIBLE);
+            avaliar.setVisibility(View.GONE);
+            notaAvaliacao.setText(String.valueOf(avaliacao.getNota()));
+            comentarioAvaliacao.setText(avaliacao.getDescricao());
+        }
 
         return rootView;
     }
@@ -113,23 +170,47 @@ public class DetalhesEmpresaFragment extends Fragment{
 
             }
         });
-//        ViewPager mViewPager = (ViewPager) view.findViewById(R.id.viewPager);
-//
-//        mViewPager.setOffscreenPageLimit(mTabs.size());
-//        mViewPager.setAdapter(new ViewPagerAdapter(getChildFragmentManager(), mTabs));
-//
-//        TabLayout mSlidingTabLayout = (TabLayout) view.findViewById(R.id.tabLayout);
-//
-//
-//
-//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            mSlidingTabLayout.setElevation(15);
-//        }
-//        mSlidingTabLayout.setupWithViewPager(mViewPager);
     }
 
     public Bitmap getImageFromBase64(String img){
         byte[] decodedString = Base64.decode(img, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
     }
+
+    public Bundle getBundleAvaliacao(){
+        Bundle bundle = new Bundle();
+        SharedData sharedData = new SharedData(getContext());
+        //Avaliacao avaliacao = new Avaliacao();
+        avaliacao.setAvaliadoid(empresa.getEmpresaId());
+        avaliacao.setPessoaid(sharedData.getPessoaId());
+        avaliacao.setTipoAvalicao(Avaliacao.EMPRESA);
+        avaliacao.setAvaliadoid(empresa.getEmpresaId());
+        bundle.putParcelable("avaliacao", avaliacao);
+        return bundle;
+    }
+
+    private void loadDialogAvaliacao(){
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        AvaliacaoDialogFragment avaliacaoDialogFragment = new AvaliacaoDialogFragment();
+        avaliacaoDialogFragment.setArguments(getBundleAvaliacao());
+        avaliacaoDialogFragment.setTargetFragment(this, 1);
+        avaliacaoDialogFragment.show(ft, "dialog");
+
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        // Stuff to do, dependent on requestCode and resultCode
+        if(requestCode == 1)  // 1 is an arbitrary number, can be any int
+        {
+            if(resultCode == 1) // 1 is an arbitrary number, can be any int
+            {
+                (new RequestAvaliacao(getContext(),getView(),avaliacao.getAvaliacaoid())).execute();
+            }
+        }
+    }
+
+
 }

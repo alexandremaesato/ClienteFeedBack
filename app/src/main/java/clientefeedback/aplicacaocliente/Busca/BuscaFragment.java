@@ -5,9 +5,15 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,85 +43,114 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import clientefeedback.aplicacaocliente.CadastrarEmpresaFragment;
-import clientefeedback.aplicacaocliente.Empresa.DetalhesEmpresaFragment;
-import clientefeedback.aplicacaocliente.Empresa.PrincipalEmpresaFragment;
-import clientefeedback.aplicacaocliente.MainActivity;
-import clientefeedback.aplicacaocliente.MainFragment;
+import clientefeedback.aplicacaocliente.Interfaces.RecyclerViewOnClickListenerHack;
 import clientefeedback.aplicacaocliente.Models.Empresa;
 import clientefeedback.aplicacaocliente.Models.Filtro;
 import clientefeedback.aplicacaocliente.R;
 import clientefeedback.aplicacaocliente.RequestData;
+import clientefeedback.aplicacaocliente.Services.ConnectionVerify;
 import clientefeedback.aplicacaocliente.Services.Url;
 import clientefeedback.aplicacaocliente.Transaction;
 import clientefeedback.aplicacaocliente.VolleyConn;
 
 
-public class BuscaFragment extends Fragment implements Transaction, AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
-    static FragmentManager f;
+public class BuscaFragment extends Fragment implements Transaction,RecyclerViewOnClickListenerHack {
+    static FragmentManager fragmentManager;
     private Context c = getContext();
     private boolean mSearchCheck;
     private static final String TEXT_FRAGMENT = "Busca";
-    private ListView listView;
-    private BuscaEmpresaAdapter adapter;
     private ProgressBar progressBar;
-    private Empresa empresa;
-    private boolean isThereMore;
-    private List<Empresa> list;
+    List<Empresa> empresas= new ArrayList<Empresa>();
     private Button botaoTeste;
-    Fragment mFragment = null;
-    FragmentManager mFragmentManager = this.getFragmentManager();
-    Application application = null;
 
-//    public static BuscaFragment newInstance(String text){
-//        BuscaFragment mFragment = new BuscaFragment(this);
-//        Bundle mBundle = new Bundle();
-//        mBundle.putString(TEXT_FRAGMENT, text);
-//        mFragment.setArguments(mBundle);
-//
-//        return mFragment;
-//    }
+    BuscaEmpresaAdapter adapter;
+    private RecyclerView mRecyclerView;
+    private List<Empresa> mList;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    int pos = 0;
+
 
     public BuscaFragment (FragmentManager f){
-        this.f = f;
+        this.fragmentManager = f;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // TODO Auto-generated method stub
-        View rootView = inflater.inflate(R.layout.fragment_busca, container, false);
-
-        TextView mTxtTitle = (TextView) rootView.findViewById(R.id.txtTitle);
-        mTxtTitle.setText(TEXT_FRAGMENT);
-
-        empresa = new Empresa();
-        list = new ArrayList<Empresa>();
+        final View rootView = inflater.inflate(R.layout.fragment_busca, container, false);
 
         progressBar = (ProgressBar) rootView.findViewById(R.id.pbProxy);
 
-        listView = (ListView) rootView.findViewById(R.id.listView);
-        listView.setOnItemClickListener(this);
-        listView.setOnScrollListener(this);
         (new VolleyConn(getContext(), this)).execute();
 
-        /// TESTE TESTE TESTE TESTE TESTE TESTE TESTE TESTE TESTE TESTE TESTE TESTE
 
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rv_list_busca);
+        mRecyclerView.setHasFixedSize(true);
 
-        botaoTeste = (Button)rootView.findViewById(R.id.btnTeste);
-        botaoTeste.setOnClickListener(new View.OnClickListener() {
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onClick(View view) {
-                System.out.println("teste");
-                new CarregaEmpresaRequest(view,getContext(),f);
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
 
-//                mFragment = new PrincipalEmpresaFragment();
-//                mFragmentManager = f;
-//                mFragmentManager.beginTransaction().replace(R.id.conteudo, mFragment).commit();
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                LinearLayoutManager llm = (LinearLayoutManager) mRecyclerView.getLayoutManager();
+                BuscaEmpresaAdapter adapter = (BuscaEmpresaAdapter) mRecyclerView.getAdapter();
+
+                if(mList.size() == llm.findLastCompletelyVisibleItemPosition() + 1){
+                    List<Empresa> listAux = getSetEmpresaList(5);
+
+                    for(int i = 0; i < listAux.size(); i++){
+                        adapter.addListItem( listAux.get(i), mList.size() );
+                    }
+                }
 
             }
         });
-        /// TESTE fim TESTE fim TESTE fim TESTE fim TESTE fimTESTE fim TESTE fim
+
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(llm);
+
+        mList = getSetEmpresaList(6);
+        adapter = new BuscaEmpresaAdapter(getActivity(), mList);
+        adapter.setRecyclerViewOnClickListenerHack(this);
+        mRecyclerView.setAdapter(adapter);
+
+        mSwipeRefreshLayout =(SwipeRefreshLayout) rootView.findViewById(R.id.srl_swipe_busca);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                if(ConnectionVerify.verifyConnection(getActivity())){
+                    BuscaEmpresaAdapter adapter = (BuscaEmpresaAdapter) mRecyclerView.getAdapter();
+                    List<Empresa> listAux = getSetEmpresaList(5);
+                    for(int i = 0; i < listAux.size(); i++){
+                        adapter.addListItem( listAux.get(i), 0 );
+                        mRecyclerView.getLayoutManager().smoothScrollToPosition(mRecyclerView, null, 0);
+                    }
+                    mSwipeRefreshLayout.setRefreshing(false);
+                } else{
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    Snackbar snackbar = Snackbar
+                            .make(rootView, R.string.connection_swipe, Snackbar.LENGTH_INDEFINITE)
+                            .setAction(R.string.connect, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Intent it = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                                    startActivity(it);
+                                }
+                            });
+                    snackbar.setActionTextColor(Color.YELLOW);
+                    snackbar.show();
+                }
+            }
+        });
+
 
         rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         return rootView;
@@ -196,30 +231,6 @@ public class BuscaFragment extends Fragment implements Transaction, AdapterView.
         }
     };
 
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//        Intent it = new Intent(getContext(), DetailsActivity.class);
-//        it.putExtra("car", list.get(position));
-//        Bundle b = new Bundle();
-//        b.put
-//        startActivity(it);
-    }
-
-    @Override
-    public void onScrollStateChanged(AbsListView view, int i) {
-        if(view.getId() == listView.getId() && isThereMore){
-            if(listView.getLastVisiblePosition() + 1 == list.size()){
-                empresa.setEmpresaId(list.get(list.size() - 1).getEmpresaId());
-                isThereMore = false;
-                (new VolleyConn(getContext(), this)).execute();
-            }
-        }
-    }
-
-    @Override
-    public void onScroll(AbsListView absListView, int i, int i1, int i2) {
-
-    }
 
     @Override
     public void doBefore() {
@@ -233,19 +244,19 @@ public class BuscaFragment extends Fragment implements Transaction, AdapterView.
             JSONObject json = new JSONObject(answer);
             JSONArray empresasJson = json.getJSONArray("Empresas");
             Gson gson = new Gson();
-            List<Empresa> empresas= new ArrayList<Empresa>();
 
             empresas = gson.fromJson(empresasJson.toString(),  new TypeToken<ArrayList<Empresa>>() {
             }.getType());
 
-            if(empresas.size() > 0){
-                if(adapter == null){
-                    adapter = new BuscaEmpresaAdapter(getContext(), empresas);
-                    listView.setAdapter(adapter);
-                }
-                else{
-                    adapter.notifyDataSetChanged();
-                }
+            if (empresas.size() > 0) {
+                pos = 0;
+                LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+                llm.setOrientation(LinearLayoutManager.VERTICAL);
+                mRecyclerView.setLayoutManager(llm);
+                mList = getSetEmpresaList(6);
+                adapter = new BuscaEmpresaAdapter(getActivity(), mList);
+                adapter.setRecyclerViewOnClickListenerHack(this);
+                mRecyclerView.setAdapter(adapter);
             }
         }
         catch(Exception e){
@@ -279,4 +290,31 @@ public class BuscaFragment extends Fragment implements Transaction, AdapterView.
         lista.put("filtro", gson.toJson(filtro));
         return lista;
     }
+
+    @Override
+    public void onClickListener(View view, int position) {
+        BuscaEmpresaAdapter adapter = (BuscaEmpresaAdapter) mRecyclerView.getAdapter();
+        new CarregaEmpresaRequest(view, getContext(), fragmentManager, (int)adapter.getItemId(position));
+    }
+
+    @Override
+    public void onLongPressClickListener(View view, int position) {
+    }
+
+    public List<Empresa> getSetEmpresaList(int qtd){
+        List<Empresa> lista = new ArrayList<>();
+        int size = empresas.size();
+
+        for(int i=0; i < qtd; i++) {
+            if (pos < size){
+                lista.add(empresas.get(pos));
+            }else{
+                i = qtd+1;
+            }
+            pos++;
+        }
+
+        return(lista);
+    }
+
 }

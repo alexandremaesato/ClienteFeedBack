@@ -1,11 +1,13 @@
 package clientefeedback.aplicacaocliente.Produto;
 
 import android.content.Context;
+import android.media.Rating;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import java.util.List;
@@ -17,6 +19,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import clientefeedback.aplicacaocliente.Interfaces.RecyclerViewOnClickListenerHack;
 import clientefeedback.aplicacaocliente.Models.Produto;
 import clientefeedback.aplicacaocliente.R;
+import clientefeedback.aplicacaocliente.Services.ImageLoaderCustom;
 import clientefeedback.aplicacaocliente.Services.Url;
 
 /**
@@ -40,18 +43,20 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.MyViewHo
         scale = mContext.getResources().getDisplayMetrics().density;
         width = mContext.getResources().getDisplayMetrics().widthPixels - (int)(14 * scale + 0.5f);
         height = (width / 16) * 9;
+        imageLoader = ImageLoaderCustom.getImageloader(mContext);
 
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(mContext)
-                .threadPoolSize(5) // default
-                .denyCacheImageMultipleSizesInMemory()
-                .memoryCache(new LruMemoryCache(2 * 1024 * 1024))
-                .memoryCacheSize(2 * 1024 * 1024)
-                .diskCacheSize(50 * 1024 * 1024)
-                .diskCacheFileCount(100)
-                .writeDebugLogs()
-                .build();
-        imageLoader = ImageLoader.getInstance();
-        imageLoader.init(config);
+
+//        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(mContext)
+//                .threadPoolSize(5) // default
+//                .denyCacheImageMultipleSizesInMemory()
+//                .memoryCache(new LruMemoryCache(2 * 1024 * 1024))
+//                .memoryCacheSize(2 * 1024 * 1024)
+//                .diskCacheSize(50 * 1024 * 1024)
+//                .diskCacheFileCount(100)
+//                .writeDebugLogs()
+//                .build();
+//        imageLoader = ImageLoader.getInstance();
+//        imageLoader.init(config);
     }
 
     @Override
@@ -65,9 +70,11 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.MyViewHo
     public void onBindViewHolder(MyViewHolder holder, int position) {
         holder.tvNome.setText(mList.get(position).getNomeProduto());
         holder.tvDescricao.setText(mList.get(position).getDescricao());
+        holder.ratingBar.setRating(4);
 
         mList.get(position).getImagemPerfil().getCaminho();
-        String url = Url.IP+"ServidorAplicativo/images/teste_1.jpg";
+        //String url = Url.IP+"ServidorAplicativo/images/teste_1.jpg";
+        String url = Url.IP + mList.get(position).getImagemPerfil().getCaminho()+mList.get(position).getImagemPerfil().getNomeImagem();
         ImageView iv = holder.ivProduto;
 
         imageLoader.displayImage(url, iv);
@@ -103,6 +110,7 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.MyViewHo
         public ImageView ivProduto;
         public TextView tvNome;
         public TextView tvDescricao;
+        public RatingBar ratingBar;
 
 
         public MyViewHolder(View itemView) {
@@ -112,6 +120,8 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.MyViewHo
             tvNome = (TextView) itemView.findViewById(R.id.tv_nome);
             tvDescricao = (TextView) itemView.findViewById(R.id.tv_descricao);
             ivProduto = (ImageView) itemView.findViewById(R.id.iv_produto);
+            ratingBar = (RatingBar) itemView.findViewById(R.id.ratingBar);
+
 
 
             itemView.setOnClickListener(this);

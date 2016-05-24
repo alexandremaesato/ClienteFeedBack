@@ -17,6 +17,8 @@ import clientefeedback.aplicacaocliente.R;
 public class AutenticacaoHeaders {
 
     private static Context c = MainActivity.contextOfApplication();
+    private static String login;
+    private static String senha;
 
     public static Map<String,String> basicAuthentication(){
         String usuario;
@@ -34,7 +36,7 @@ public class AutenticacaoHeaders {
         return createBasicAuthHeader(usuario, senha);
     }
 
-    public static Map<String,String> basicRegister(String login, String senha){
+    public static Map<String,String> basicRegister(){
 
         SharedPreferences prefs = c.getSharedPreferences("account", Context.MODE_PRIVATE);
         prefs.getString(c.getString(R.string.id), "");

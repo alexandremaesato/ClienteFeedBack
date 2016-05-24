@@ -20,14 +20,14 @@ import clientefeedback.aplicacaocliente.Models.Empresa;
 import clientefeedback.aplicacaocliente.Services.AutenticacaoHeaders;
 import clientefeedback.aplicacaocliente.Services.AutorizacaoRequest;
 
-public class VolleyConn {
+public class VolleyConGET {
     private Context c;
     private Transaction transaction;
     private RequestQueue requestQueue;
 
 
 
-    public VolleyConn(Context c, Transaction t){
+    public VolleyConGET(Context c, Transaction t){
         this.c = c;
         transaction = t;
         requestQueue = ((CustomApplication) ((Activity) c).getApplication()).getRequestQueue();
@@ -41,7 +41,7 @@ public class VolleyConn {
 
 
     private void callByStringRequest(final RequestData requestData){
-        StringRequest request = new AutorizacaoRequest(Request.Method.POST,
+        StringRequest request = new AutorizacaoRequest(Request.Method.GET,
                 requestData.getUrl(),
                 new Response.Listener<String>() {
                     @Override
@@ -52,20 +52,14 @@ public class VolleyConn {
                 new Response.ErrorListener(){
                     @Override
                     public void onErrorResponse(VolleyError error){
-                        String message = "Erro";
-                        if(error.networkResponse != null) {
-                            if (error.networkResponse.statusCode == 401) {
-                                message = c.getString(R.string.erro401);
-                            }
-                        }
-                        transaction.doAfter(message);
+                        transaction.doAfter(null);
                     }
                 }){
             @Override
             public Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 //params.put("method", requestData.getMethod());
-                //params.put("teste","true");
+                params.put("teste","true");
 
 
                 if(requestData.getObj() != null){
