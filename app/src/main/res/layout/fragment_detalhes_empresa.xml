@@ -24,6 +24,7 @@
             android:layout_margin="0dp">
 
             <ImageView
+                android:src="@drawable/ic_camera_enhance_black_24dp"
                 android:id="@+id/imagemPerfil"
                 android:layout_width="390dp"
                 android:layout_height="210dp"
@@ -169,6 +170,7 @@
 
                 <ProgressBar
                     style="?android:attr/progressBarStyleSmall"
+                    android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/progressBarAvaliacao"

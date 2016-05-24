@@ -61,7 +61,6 @@ public class BuscaFragment extends Fragment implements Transaction,RecyclerViewO
     private static final String TEXT_FRAGMENT = "Busca";
     private ProgressBar progressBar;
     List<Empresa> empresas= new ArrayList<Empresa>();
-    private Button botaoTeste;
 
     BuscaEmpresaAdapter adapter;
     private RecyclerView mRecyclerView;
