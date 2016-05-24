@@ -41,6 +41,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.facebook.drawee.backends.pipeline.Fresco;
 
 import clientefeedback.aplicacaocliente.Busca.BuscaFragment;
 import clientefeedback.aplicacaocliente.Empresa.CadastrarEmpresaActivity;
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fresco.initialize(this);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         contextOfApplication = this;
@@ -148,7 +150,9 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.tabPagerExemplo) {
             mFragment = new ViewPagerFragment();
-
+        } else if (id == R.id.cadastrarEmpresa) {
+            Intent it = new Intent(this, CadastrarEmpresaActivity.class);
+            startActivity(it);
         } else if (id == R.id.nav_share) {
             mFragment = new PrincipalEmpresaFragment();
 

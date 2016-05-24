@@ -1,8 +1,11 @@
 package clientefeedback.aplicacaocliente.Adapters;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Animatable;
+import android.net.Uri;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,11 +14,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.backends.pipeline.PipelineDraweeController;
+import com.facebook.drawee.controller.BaseControllerListener;
+import com.facebook.drawee.controller.ControllerListener;
+import com.facebook.drawee.generic.RoundingParams;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
+
 import java.util.List;
 import clientefeedback.aplicacaocliente.Interfaces.RecyclerViewOnClickListenerHack;
 import clientefeedback.aplicacaocliente.Models.Empresa;
 import clientefeedback.aplicacaocliente.Models.ImageHelper;
 import clientefeedback.aplicacaocliente.R;
+import clientefeedback.aplicacaocliente.Services.Url;
 
 /**
  * Created by Guilherme on 21/04/2016.
@@ -49,13 +65,21 @@ public class EmpresaAdapter extends RecyclerView.Adapter<EmpresaAdapter.MyViewHo
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         holder.tvNome.setText(mList.get(position).getNomeEmpresa());
-        holder.tvDescricao.setText(mList.get(position).getDescricao());
+        String local = mList.get(position).getEndereco().getCidade() + "/" + mList.get(position).getEndereco().getEstado();
+        holder.tvLocalizacao.setText(local);
+        holder.tvAvaliacao.setText(String.valueOf(mList.get(position).getAvaliacaoNota()));
 
-        Bitmap bitmap = BitmapFactory.decodeResource( mContext.getResources(), mList.get(position).getPhoto());
-        bitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
+        Uri uri = Uri.parse(Url.IP + "ServidorAplicativo/" + mList.get(position).getImagemPerfil().getCaminho());
 
-        bitmap = ImageHelper.getRoundedCornerBitmap(mContext, bitmap, 4, width, height, false, false, true, true);
-        holder.ivEmpresa.setImageBitmap(bitmap);
+        // Resizing image using Fresco
+            ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
+                    .setResizeOptions(new ResizeOptions(width, height))
+                    .build();
+            DraweeController controller = Fresco.newDraweeControllerBuilder()
+                    .setOldController(holder.draweeView.getController())
+                    .setImageRequest(request)
+                    .build();
+            holder.draweeView.setController(controller);
     }
 
     @Override
@@ -78,16 +102,20 @@ public class EmpresaAdapter extends RecyclerView.Adapter<EmpresaAdapter.MyViewHo
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        public ImageView ivEmpresa;
+//        public ImageView ivEmpresa;
+        public SimpleDraweeView draweeView;
         public TextView tvNome;
-        public TextView tvDescricao;
+        public TextView tvLocalizacao;
+        public TextView tvAvaliacao;
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
-            ivEmpresa = (ImageView) itemView.findViewById(R.id.iv_empresa);
+//            ivEmpresa = (ImageView) itemView.findViewById(R.id.iv_empresa);
+            draweeView = (SimpleDraweeView) itemView.findViewById(R.id.iv_empresa);
             tvNome = (TextView) itemView.findViewById(R.id.tv_nome);
-            tvDescricao = (TextView) itemView.findViewById(R.id.tv_descricao);
+            tvLocalizacao = (TextView) itemView.findViewById(R.id.tv_localizacao);
+            tvAvaliacao = (TextView) itemView.findViewById(R.id.tv_avaliacao);
 
             itemView.setOnClickListener(this);
         }

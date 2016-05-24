@@ -63,7 +63,7 @@ public class ProdutoFragment extends Fragment implements RecyclerViewOnClickList
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // TODO Auto-generated method stub
-        final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_produto, container, false);
         if(!empresa.produtosIsEmpty()) {
             mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rv_list);
 

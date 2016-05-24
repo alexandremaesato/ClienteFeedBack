@@ -18,7 +18,6 @@ public class Empresa implements Parcelable{
     private String cnpj;
     private String descricao;
     private Imagem imagemPerfil;
-    private int photo; // Apenas para teste
     private List<Imagem> imagensNaoOficiais;
     private List<Imagem> imagensOficiais;
     private List<Comentario> comentarios;
@@ -26,7 +25,7 @@ public class Empresa implements Parcelable{
     private List<Telefone> telefones;
     private Endereco endereco;
     private List<Produto> produtos;
-    private String avaliacaoNota;
+    private int avaliacaoNota;
     private int qtdeComentarios;
     private int qtdeAvaliacoes;
 
@@ -47,8 +46,7 @@ public class Empresa implements Parcelable{
         telefones = (ArrayList<Telefone>)in.readArrayList(Telefone.class.getClassLoader());
         endereco = (Endereco)in.readValue(Endereco.class.getClassLoader());
         produtos = (ArrayList<Produto>)in.readArrayList(Produto.class.getClassLoader());
-        avaliacaoNota = in.readString();
-
+        avaliacaoNota = in.readInt();
         qtdeComentarios = in.readInt();
         qtdeAvaliacoes = in.readInt();
     }
@@ -64,18 +62,6 @@ public class Empresa implements Parcelable{
             return new Empresa[size];
         }
     };
-
-    // TESTE
-        public int getPhoto() {
-            return photo;
-        }
-
-        public void setPhoto(int photo) {
-            this.photo = photo;
-        }
-    // TESTE
-
-
 
     public int getEmpresaId() {
         return empresaId;
@@ -173,11 +159,11 @@ public class Empresa implements Parcelable{
         this.produtos = produtos;
     }
 
-    public String getAvaliacaoNota() {
+    public int getAvaliacaoNota() {
         return avaliacaoNota;
     }
 
-    public void setAvaliacaoNota(String avaliacaoNota) {
+    public void setAvaliacaoNota(int avaliacaoNota) {
         this.avaliacaoNota = avaliacaoNota;
     }
 
@@ -243,7 +229,7 @@ public class Empresa implements Parcelable{
         parcel.writeValue(telefones);
         parcel.writeValue(endereco);
         parcel.writeValue(produtos);
-        parcel.writeString(avaliacaoNota);
+        parcel.writeInt(avaliacaoNota);
         parcel.writeInt(qtdeComentarios);
         parcel.writeInt(qtdeAvaliacoes);
     }

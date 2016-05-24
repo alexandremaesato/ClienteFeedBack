@@ -2,14 +2,12 @@ package clientefeedback.aplicacaocliente;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.audiofx.BassBoost;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
@@ -19,20 +17,30 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 import clientefeedback.aplicacaocliente.Adapters.EmpresaAdapter;
-import clientefeedback.aplicacaocliente.Empresa.CadastrarEmpresaActivity;
 import clientefeedback.aplicacaocliente.Interfaces.RecyclerViewOnClickListenerHack;
 import clientefeedback.aplicacaocliente.Models.Empresa;
-import clientefeedback.aplicacaocliente.Models.Imagem;
+import clientefeedback.aplicacaocliente.Services.AutorizacaoRequest;
 import clientefeedback.aplicacaocliente.Services.ConnectionVerify;
+import clientefeedback.aplicacaocliente.Services.Url;
 
 
 public class MainFragment extends Fragment implements RecyclerViewOnClickListenerHack {
@@ -41,7 +49,10 @@ public class MainFragment extends Fragment implements RecyclerViewOnClickListene
     private static final String TEXT_FRAGMENT = "TEXT_FRAGMENT";
     private RecyclerView mRecyclerView;
     private List<Empresa> mList;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private RequestQueue rq;
+    private ProgressBar mPbLoad;
+    private Gson gson;
+    private boolean isLastItem;
 
     public static MainFragment newInstance(String text){
         MainFragment mFragment = new MainFragment();
@@ -56,6 +67,10 @@ public class MainFragment extends Fragment implements RecyclerViewOnClickListene
                              Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        rq = Volley.newRequestQueue(getActivity());
+        mPbLoad = (ProgressBar) rootView.findViewById(R.id.pb_load);
+        gson = new Gson();
+        mList = new ArrayList<>();
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rv_list);
         mRecyclerView.setHasFixedSize(true);
@@ -72,12 +87,8 @@ public class MainFragment extends Fragment implements RecyclerViewOnClickListene
                 LinearLayoutManager llm = (LinearLayoutManager) mRecyclerView.getLayoutManager();
                 EmpresaAdapter adapter = (EmpresaAdapter) mRecyclerView.getAdapter();
 
-                if(mList.size() == llm.findLastCompletelyVisibleItemPosition() + 1){
-                    List<Empresa> listAux = getSetEmpresaList(5);
-
-                    for(int i = 0; i < listAux.size(); i++){
-                        adapter.addListItem( listAux.get(i), mList.size() );
-                    }
+                if (!isLastItem && mList.size() == llm.findLastCompletelyVisibleItemPosition() + 1) {
+                    execute();
                 }
 
             }
@@ -87,43 +98,31 @@ public class MainFragment extends Fragment implements RecyclerViewOnClickListene
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(llm);
 
-        mList = getSetEmpresaList(6);
         EmpresaAdapter adapter = new EmpresaAdapter(getActivity(), mList);
         adapter.setRecyclerViewOnClickListenerHack(this);
         mRecyclerView.setAdapter(adapter);
 
-        mSwipeRefreshLayout =(SwipeRefreshLayout) rootView.findViewById(R.id.srl_swipe);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-
-                if(ConnectionVerify.verifyConnection( getActivity() )){
-                    EmpresaAdapter adapter = (EmpresaAdapter) mRecyclerView.getAdapter();
-                    List<Empresa> listAux = getSetEmpresaList(2);
-                    for(int i = 0; i < listAux.size(); i++){
-                        adapter.addListItem( listAux.get(i), 0 );
-                        mRecyclerView.getLayoutManager().smoothScrollToPosition(mRecyclerView, null, 0);
-                    }
-                    mSwipeRefreshLayout.setRefreshing(false);
-                } else{
-                    mSwipeRefreshLayout.setRefreshing(false);
-                    Snackbar snackbar = Snackbar
-                        .make(rootView, R.string.connection_swipe, Snackbar.LENGTH_INDEFINITE)
-                        .setAction(R.string.connect, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Intent it = new Intent(Settings.ACTION_WIFI_SETTINGS);
-                                startActivity(it);
-                            }
-                        });
-                    snackbar.setActionTextColor(Color.YELLOW);
-                    snackbar.show();
-                }
-            }
-        });
-
         rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT ));
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if(mList == null || mList.size() == 0){
+            callVolleyRequest();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        callVolleyRequest();
+    }
+
+    public void callVolleyRequest(){
+        execute();
     }
 
     @Override
@@ -151,6 +150,7 @@ public class MainFragment extends Fragment implements RecyclerViewOnClickListene
         searchView.setOnQueryTextListener(onQuerySearchView);
 
         menu.findItem(R.id.menu_add).setVisible(true);
+
         mSearchCheck = false;
     }
 
@@ -161,8 +161,7 @@ public class MainFragment extends Fragment implements RecyclerViewOnClickListene
         switch (item.getItemId()) {
 
             case R.id.menu_add:
-                Intent intent = new Intent(getContext(), CadastrarEmpresaActivity.class);
-                startActivity(intent);
+                Toast.makeText(getActivity(), "Add", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.menu_search:
@@ -182,47 +181,129 @@ public class MainFragment extends Fragment implements RecyclerViewOnClickListene
         @Override
         public boolean onQueryTextChange(String s) {
             if (mSearchCheck){
-                Toast.makeText(getContext(), "Teste", Toast.LENGTH_SHORT).show();
+                // implement your search here
             }
             return false;
         }
     };
 
-    public List<Empresa> getSetEmpresaList(int qtd){
-        String[] nome = new String[]{"TESTE 1", "TESTE 2", "TESTE 3", "TESTE 4", "TESTE 5", "TESTE 6"};
-        String[] descricao = new String[]{"TESTE TESTE 1", "TESTE TESTE 2", "TESTE TESTE 3", "TESTE TESTE 4", "TESTE TESTE 5", "TESTE TESTE 6"};
-//        int[] categories = new int[]{2, 1, 2, 1, 1, 4, 3, 2, 4, 1};
-        int[] photos = new int[]{R.drawable.teste_1, R.drawable.teste_2, R.drawable.teste_3, R.drawable.teste_4, R.drawable.teste_5, R.drawable.teste_6};
-//        String[] urlPhotos = new String[]{"gallardo.jpg", "vyron.jpg", "corvette.jpg", "paganni_zonda.jpg", "porsche_911.jpg", "bmw_720.jpg", "db77.jpg", "mustang.jpg", "camaro.jpg", "ct6.jpg"};
-//        String description = "Lorem Ipsum é simplesmente uma simulação de texto da indústria tipográfica e de impressos, e vem sendo utilizado desde o século XVI, quando um impressor desconhecido pegou uma bandeja de tipos e os embaralhou para fazer um livro de modelos de tipos. Lorem Ipsum sobreviveu não só a cinco séculos, como também ao salto para a editoração eletrônica, permanecendo essencialmente inalterado. Se popularizou na década de 60, quando a Letraset lançou decalques contendo passagens de Lorem Ipsum, e mais recentemente quando passou a ser integrado a softwares de editoração eletrônica como Aldus PageMaker.";
-        List<Empresa> listAux = new ArrayList<>();
-
-        for(int i = 0; i < qtd; i++){
-            Empresa e = new Empresa();
-            e.setNomeEmpresa(nome[i % nome.length]);
-            e.setDescricao(descricao[i % descricao.length]);
-            e.setPhoto(photos[i % photos.length]);
-//            c.setDescription(description);
-//            c.setCategory( categories[ i % brands.length ] );
-//            c.setTel("33221155");
-//
-//            if(category != 0 && c.getCategory() != category){
-//                continue;
-//            }
-            listAux.add(e);
-        }
-        return(listAux);
-    }
-
     @Override
     public void onClickListener(View view, int position) {
         Toast.makeText(getActivity(), "Position: "+position, Toast.LENGTH_SHORT).show();
-        EmpresaAdapter adapter = (EmpresaAdapter) mRecyclerView.getAdapter();
-        adapter.removeListItem(position);
+//        EmpresaAdapter adapter = (EmpresaAdapter) mRecyclerView.getAdapter();
+//        adapter.removeListItem(position);
     }
 
     @Override
-    public void onLongPressClickListener(View view, int position) {
+    public void onLongPressClickListener(View view, int position) {}
 
+    public void execute(){
+        final Empresa empresa = doBefore();
+        String url = Url.getUrl()+"Empresa/carregarEmpresas/"+empresa.getAvaliacaoNota();
+
+        StringRequest request = new AutorizacaoRequest(
+                Request.Method.GET,
+                url,
+                new Response.Listener<String>() {
+                    public void onResponse(String result) {
+                        doAfter(result);
+                    }
+                },
+                new Response.ErrorListener() {
+                    public void onErrorResponse(VolleyError error) {
+                        if (error.networkResponse != null) {
+                            if (error.networkResponse.statusCode == 401) {
+                                mPbLoad.setVisibility(View.GONE);
+                                Snackbar snackbar = Snackbar
+                                        .make(getView(), R.string.error, Snackbar.LENGTH_INDEFINITE)
+                                        .setAction(R.string.btnretry, new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                execute();
+                                            }
+                                        });
+                                snackbar.setActionTextColor(Color.YELLOW);
+                                snackbar.show();
+                            }
+                        }else {
+                            mPbLoad.setVisibility(View.GONE);
+                            Snackbar snackbar = Snackbar
+                                    .make(getView(), R.string.error, Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(R.string.btnretry, new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            execute();
+                                        }
+                                    });
+                            snackbar.setActionTextColor(Color.YELLOW);
+                            snackbar.show();
+                        }
+                    }
+                });
+
+        request.setTag(MainFragment.class.getName());
+        request.setRetryPolicy(new DefaultRetryPolicy(5000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        rq.add(request);
+    }
+
+    public Empresa doBefore() {
+        mPbLoad.setVisibility(View.VISIBLE);
+        Empresa empresa = new Empresa();
+
+        if( ConnectionVerify.verifyConnection(getActivity()) ){
+
+            if( mList != null && mList.size() > 0 ){
+                empresa.setAvaliacaoNota(mList.get(mList.size() - 1).getAvaliacaoNota());
+            } else{
+                empresa.setAvaliacaoNota(-1);
+            }
+        } else{
+            mPbLoad.setVisibility(View.GONE);
+            Snackbar snackbar = Snackbar
+                    .make(getView(), R.string.connection_swipe, Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.connect, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent it = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                            startActivity(it);
+                        }
+                    });
+            snackbar.setActionTextColor(Color.YELLOW);
+            snackbar.show();
+        }
+        return empresa;
+    }
+
+    public void doAfter(String json) {
+        mPbLoad.setVisibility( View.GONE );
+
+        if( json != null ){
+            EmpresaAdapter adapter = (EmpresaAdapter) mRecyclerView.getAdapter();
+            Gson gson = new Gson();
+            int position;
+
+            try{
+                Type type = new TypeToken<List<Empresa>>(){}.getType();
+                List<Empresa> empresas = gson.fromJson(json, type);
+                for(int i = 0, tamI = empresas.size(); i < tamI; i++){
+                    Empresa empresa = empresas.get(i);
+                    position = mList.size();
+                    adapter.addListItem(empresa, position);
+                }
+
+                if( json.length() == 0 ){
+                    isLastItem = true;
+                }
+
+            }
+            catch(Exception e){
+                Toast.makeText(getActivity(), "Algo aqui", Toast.LENGTH_SHORT).show();
+            }
+        } else{
+            Toast.makeText(getActivity(), "Falhou. Tente novamente.", Toast.LENGTH_SHORT).show();
+        }
     }
 }

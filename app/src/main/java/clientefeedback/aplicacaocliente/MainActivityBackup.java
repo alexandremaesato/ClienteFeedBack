@@ -144,7 +144,7 @@ public class MainActivityBackup extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         } else if (id == R.id.nav_busca) {
-            mFragment = new BuscaFragment();
+//            mFragment = new BuscaFragment();
         }
 
         if (mFragment != null) {

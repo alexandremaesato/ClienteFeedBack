@@ -54,6 +54,8 @@
     <!-- Tela Login -->
     <string name="connection_swipe">Sem conexão com Internet. Por favor, verifique seu WIFI ou 3G.</string>
     <string name="connect">Conectar</string>
+    <string name="error">Ocorreu um erro no servidor</string>
+    <string name="btnretry">Atualizar</string>
 
     <!-- Valores de Dados Compartilhados -->
     <string name="SharedPreferences">SharedPreferences</string>
@@ -119,8 +121,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
-
-<!-- Categorias de Comidas -->
+    <!-- Categorias de Comidas -->
     <string-array name="tipo_cozinhas">
         <item>Árabe</item>
         <item>Norte Americana</item>
@@ -165,7 +166,7 @@
         <item>SE</item>
         <item>TO</item>
     </string-array>
-<!--Array de Ordenação-->
+    <!--Array de Ordenação-->
     <string-array name="tipo_ordem">
         <item>Nome</item>
         <item>Menor Valor</item>
