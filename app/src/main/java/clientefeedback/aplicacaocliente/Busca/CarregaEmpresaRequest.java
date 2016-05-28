@@ -47,6 +47,7 @@ public class CarregaEmpresaRequest implements Transaction{
         this.v = v;
         this.c = c;
         this.idEmpresa = idEmpresa;
+        this.progressBar = (ProgressBar)v.findViewById(R.id.pbProxy);
         SharedData sd= new SharedData(c);
         this.idPessoa = sd.getPessoaId();
         (new PrincipalEmpresaRequest(c, this)).execute();
@@ -56,7 +57,7 @@ public class CarregaEmpresaRequest implements Transaction{
 
     @Override
     public void doBefore() {
-        //progressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -72,6 +73,7 @@ public class CarregaEmpresaRequest implements Transaction{
             (new PrincipalEmpresaRequest(c, getTransactionAvaliacao())).execute();
             beginTransaction();
         }
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -109,7 +111,7 @@ public class CarregaEmpresaRequest implements Transaction{
 
     private void beginTransaction(){
         if(empresaBool && avaliacaoBool) {
-            fragmentManager.beginTransaction().replace(R.id.conteudo, mFragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.conteudo, mFragment).addToBackStack("busca").commit();
         }
     }
 }

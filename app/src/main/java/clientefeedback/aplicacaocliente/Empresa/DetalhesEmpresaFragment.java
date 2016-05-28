@@ -8,10 +8,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.util.Base64;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
@@ -42,7 +46,7 @@ import clientefeedback.aplicacaocliente.TabPagerItem;
 /**
  * Created by Alexandre on 25/04/2016.
  */
-public class DetalhesEmpresaFragment extends Fragment{
+public class DetalhesEmpresaFragment extends PrincipalEmpresaFragment{
     private List<TabPagerItem> mTabs = new ArrayList<>();
     private static final String TEXT_FRAGMENT = "TEXT_FRAGMENT";
     private Empresa empresa;
@@ -122,10 +126,13 @@ public class DetalhesEmpresaFragment extends Fragment{
 
         String tel = "";
         for(int i=0; i<empresa.getTelefones().size(); i++ ){
-            tel = tel+" "+empresa.getTelefones().get(i).getNumero();
-            if( i+1<empresa.getTelefones().size()){
-            tel = tel+", ";
+            if(empresa.getTelefones().get(i).getNumero() != "null") {
+                tel = tel + " " + empresa.getTelefones().get(i).getNumero();
+                if( i+1<empresa.getTelefones().size()){
+                    tel = tel+", ";
+                }
             }
+
         }
         telefone = (TextView)rootView.findViewById(R.id.telefone);
         telefone.setText(tel);
@@ -133,7 +140,7 @@ public class DetalhesEmpresaFragment extends Fragment{
         imagemPerfil = (ImageView)rootView.findViewById(R.id.imagemPerfil);
         String url = null;
         if(empresa.hasImagemPerfil()) {
-            url = Url.IP + empresa.getImagemPerfil().getCaminho()+empresa.getImagemPerfil().getNomeImagem();
+            url = Url.url + empresa.getImagemPerfil().getCaminho();
         }
         imageLoader.displayImage(url, imagemPerfil);
 
@@ -157,6 +164,19 @@ public class DetalhesEmpresaFragment extends Fragment{
             notaAvaliacao.setText(String.valueOf(avaliacao.getNota()));
             comentarioAvaliacao.setText(avaliacao.getDescricao());
         }
+
+        rootView.setOnKeyListener( new View.OnKeyListener()
+        {
+            @Override
+            public boolean onKey( View v, int keyCode, KeyEvent event )
+            {
+                if( keyCode == KeyEvent.KEYCODE_BACK )
+                {
+                    getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                }
+                return false;
+            }
+        } );
 
         return rootView;
     }
@@ -210,6 +230,11 @@ public class DetalhesEmpresaFragment extends Fragment{
                 (new RequestAvaliacao(getContext(),getView(),avaliacao.getAvaliacaoid())).execute();
             }
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
 

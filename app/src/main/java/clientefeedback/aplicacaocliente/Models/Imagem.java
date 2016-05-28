@@ -50,7 +50,9 @@ public class Imagem implements Parcelable{
     };
 
     public String getCaminho() {
-        return caminho;
+        String img = caminho+nomeImagem;
+        img.replace("//","/");
+        return img;
     }
 
     public void setCaminho(String caminho) {

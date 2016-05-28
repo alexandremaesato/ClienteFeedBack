@@ -36,14 +36,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import clientefeedback.aplicacaocliente.Adapters.EmpresaAdapter;
+import clientefeedback.aplicacaocliente.Busca.BuscaRequest;
 import clientefeedback.aplicacaocliente.Interfaces.RecyclerViewOnClickListenerHack;
 import clientefeedback.aplicacaocliente.Models.Empresa;
 import clientefeedback.aplicacaocliente.Services.AutorizacaoRequest;
 import clientefeedback.aplicacaocliente.Services.ConnectionVerify;
+import clientefeedback.aplicacaocliente.Services.SnackMessage;
+import clientefeedback.aplicacaocliente.Services.SnackMessageInterface;
 import clientefeedback.aplicacaocliente.Services.Url;
 
 
-public class MainFragment extends Fragment implements RecyclerViewOnClickListenerHack {
+public class MainFragment extends Fragment implements RecyclerViewOnClickListenerHack, SnackMessageInterface {
 
     private boolean mSearchCheck;
     private static final String TEXT_FRAGMENT = "TEXT_FRAGMENT";
@@ -53,6 +56,8 @@ public class MainFragment extends Fragment implements RecyclerViewOnClickListene
     private ProgressBar mPbLoad;
     private Gson gson;
     private boolean isLastItem;
+    private View rootView;
+    boolean boolLoadWifi = false;
 
     public static MainFragment newInstance(String text){
         MainFragment mFragment = new MainFragment();
@@ -66,7 +71,7 @@ public class MainFragment extends Fragment implements RecyclerViewOnClickListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // TODO Auto-generated method stub
-        final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        rootView = inflater.inflate(R.layout.fragment_main, container, false);
         rq = Volley.newRequestQueue(getActivity());
         mPbLoad = (ProgressBar) rootView.findViewById(R.id.pb_load);
         gson = new Gson();
@@ -175,6 +180,7 @@ public class MainFragment extends Fragment implements RecyclerViewOnClickListene
     private SearchView.OnQueryTextListener onQuerySearchView = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String s) {
+            new BuscaRequest(getContext(), s);
             return false;
         }
 
@@ -214,29 +220,10 @@ public class MainFragment extends Fragment implements RecyclerViewOnClickListene
                         if (error.networkResponse != null) {
                             if (error.networkResponse.statusCode == 401) {
                                 mPbLoad.setVisibility(View.GONE);
-                                Snackbar snackbar = Snackbar
-                                        .make(getView(), R.string.error, Snackbar.LENGTH_INDEFINITE)
-                                        .setAction(R.string.btnretry, new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                execute();
-                                            }
-                                        });
-                                snackbar.setActionTextColor(Color.YELLOW);
-                                snackbar.show();
                             }
                         }else {
                             mPbLoad.setVisibility(View.GONE);
-                            Snackbar snackbar = Snackbar
-                                    .make(getView(), R.string.error, Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(R.string.btnretry, new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            execute();
-                                        }
-                                    });
-                            snackbar.setActionTextColor(Color.YELLOW);
-                            snackbar.show();
+                            snackShow();
                         }
                     }
                 });
@@ -262,23 +249,26 @@ public class MainFragment extends Fragment implements RecyclerViewOnClickListene
             }
         } else{
             mPbLoad.setVisibility(View.GONE);
-            Snackbar snackbar = Snackbar
-                    .make(getView(), R.string.connection_swipe, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(R.string.connect, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent it = new Intent(Settings.ACTION_WIFI_SETTINGS);
-                            startActivity(it);
-                        }
-                    });
-            snackbar.setActionTextColor(Color.YELLOW);
-            snackbar.show();
+            boolLoadWifi = true;
+           // new SnackMessage(this).snackShowError(rootView);
+            snackShow();
+//            Snackbar snackbar = Snackbar
+//                    .make(getView(), R.string.connection_swipe, Snackbar.LENGTH_INDEFINITE)
+//                    .setAction(R.string.connect, new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            Intent it = new Intent(Settings.ACTION_WIFI_SETTINGS);
+//                            startActivity(it);
+//                        }
+//                    });
+//            snackbar.setActionTextColor(Color.YELLOW);
+//            snackbar.show();
         }
         return empresa;
     }
 
     public void doAfter(String json) {
-        mPbLoad.setVisibility( View.GONE );
+        mPbLoad.setVisibility(View.GONE);
 
         if( json != null ){
             EmpresaAdapter adapter = (EmpresaAdapter) mRecyclerView.getAdapter();
@@ -304,6 +294,26 @@ public class MainFragment extends Fragment implements RecyclerViewOnClickListene
             }
         } else{
             Toast.makeText(getActivity(), "Falhou. Tente novamente.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void snackShow(){
+        if(boolLoadWifi){
+            new SnackMessage(this).snackShowErrorWifi(rootView);
+        }else{
+            new SnackMessage(this).snackShowError(rootView);
+        }
+
+    }
+
+    @Override
+    public void executeAfterMessage() {
+        if(boolLoadWifi){
+            boolLoadWifi = false;
+            Intent it = new Intent(Settings.ACTION_WIFI_SETTINGS);
+            startActivity(it);
+        }else {
+            execute();
         }
     }
 }

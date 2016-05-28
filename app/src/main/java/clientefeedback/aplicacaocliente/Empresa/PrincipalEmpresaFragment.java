@@ -8,9 +8,14 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.Toast;
 
@@ -30,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import clientefeedback.aplicacaocliente.Busca.BuscaEmpresaAdapter;
+import clientefeedback.aplicacaocliente.Busca.BuscaRequest;
 import clientefeedback.aplicacaocliente.MainFragment;
 import clientefeedback.aplicacaocliente.Models.Empresa;
 import clientefeedback.aplicacaocliente.Models.Filtro;
@@ -51,6 +57,7 @@ public class PrincipalEmpresaFragment extends Fragment{
     private Empresa empresa;
     Bundle bundle = new Bundle();
     boolean notTrue = false;
+    boolean mSearchCheck = false;
 
 
     
@@ -108,4 +115,38 @@ public class PrincipalEmpresaFragment extends Fragment{
         }
         mSlidingTabLayout.setupWithViewPager(mViewPager);
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // TODO Auto-generated method stub
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu, menu);
+
+        //Select search item
+        final MenuItem menuItem = menu.findItem(R.id.menu_search);
+        menuItem.setVisible(true);
+
+        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setQueryHint("Busca");
+
+        ((EditText) searchView.findViewById(R.id.search_src_text))
+                .setHintTextColor(getResources().getColor(R.color.colorPrimary));
+        searchView.setOnQueryTextListener(onQuerySearchView);
+
+        menu.findItem(R.id.menu_add).setVisible(true);
+        mSearchCheck = false;
+    }
+
+    private SearchView.OnQueryTextListener onQuerySearchView = new SearchView.OnQueryTextListener() {
+        @Override
+        public boolean onQueryTextSubmit(String s) {
+            new BuscaRequest(getContext(), s);
+            return false;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String s) {
+            return false;
+        }
+    };
 }

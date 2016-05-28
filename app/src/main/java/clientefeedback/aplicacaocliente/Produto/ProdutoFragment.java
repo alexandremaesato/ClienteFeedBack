@@ -142,26 +142,26 @@ public class ProdutoFragment extends Fragment implements RecyclerViewOnClickList
         setHasOptionsMenu(true);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // TODO Auto-generated method stub
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu, menu);
-
-        //Select search item
-        final MenuItem menuItem = menu.findItem(R.id.menu_search);
-        menuItem.setVisible(true);
-
-        SearchView searchView = (SearchView) menuItem.getActionView();
-        searchView.setQueryHint("Busca");
-
-        ((EditText) searchView.findViewById(R.id.search_src_text))
-                .setHintTextColor(getResources().getColor(R.color.colorPrimary));
-        searchView.setOnQueryTextListener(onQuerySearchView);
-
-        menu.findItem(R.id.menu_add).setVisible(true);
-        mSearchCheck = false;
-    }
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        // TODO Auto-generated method stub
+//        super.onCreateOptionsMenu(menu, inflater);
+//        inflater.inflate(R.menu.menu, menu);
+//
+//        //Select search item
+//        final MenuItem menuItem = menu.findItem(R.id.menu_search);
+//        menuItem.setVisible(true);
+//
+//        SearchView searchView = (SearchView) menuItem.getActionView();
+//        searchView.setQueryHint("Busca");
+//
+//        ((EditText) searchView.findViewById(R.id.search_src_text))
+//                .setHintTextColor(getResources().getColor(R.color.colorPrimary));
+//        searchView.setOnQueryTextListener(onQuerySearchView);
+//
+//        menu.findItem(R.id.menu_add).setVisible(true);
+//        mSearchCheck = false;
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -182,21 +182,21 @@ public class ProdutoFragment extends Fragment implements RecyclerViewOnClickList
         return true;
     }
 
-    private SearchView.OnQueryTextListener onQuerySearchView = new SearchView.OnQueryTextListener() {
-        @Override
-        public boolean onQueryTextSubmit(String s) {
-            Toast.makeText(getContext(), "Submitou", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        @Override
-        public boolean onQueryTextChange(String s) {
-            if (mSearchCheck){
-                //Toast.makeText(getContext(), "Teste", Toast.LENGTH_SHORT).show();
-            }
-            return false;
-        }
-    };
+//    private SearchView.OnQueryTextListener onQuerySearchView = new SearchView.OnQueryTextListener() {
+//        @Override
+//        public boolean onQueryTextSubmit(String s) {
+//            Toast.makeText(getContext(), "Submitou", Toast.LENGTH_SHORT).show();
+//            return false;
+//        }
+//
+//        @Override
+//        public boolean onQueryTextChange(String s) {
+//            if (mSearchCheck){
+//                //Toast.makeText(getContext(), "Teste", Toast.LENGTH_SHORT).show();
+//            }
+//            return false;
+//        }
+//    };
 
     public List<Produto> getSetProdutoList(int qtd){
         if (!empresa.produtosIsEmpty()) {
