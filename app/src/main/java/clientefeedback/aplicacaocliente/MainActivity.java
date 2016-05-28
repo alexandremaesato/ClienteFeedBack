@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (mFragment != null) {
-            mFragmentManager.beginTransaction().replace(R.id.conteudo, mFragment).commit();
+            mFragmentManager.beginTransaction().replace(R.id.conteudo, mFragment).addToBackStack("main").commit();
         }
 
 

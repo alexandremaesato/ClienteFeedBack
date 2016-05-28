@@ -1,6 +1,7 @@
 package clientefeedback.aplicacaocliente.Busca;
 
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -49,12 +51,15 @@ import clientefeedback.aplicacaocliente.Models.Filtro;
 import clientefeedback.aplicacaocliente.R;
 import clientefeedback.aplicacaocliente.RequestData;
 import clientefeedback.aplicacaocliente.Services.ConnectionVerify;
+import clientefeedback.aplicacaocliente.Services.SnackMessage;
+import clientefeedback.aplicacaocliente.Services.SnackMessageInterface;
 import clientefeedback.aplicacaocliente.Services.Url;
 import clientefeedback.aplicacaocliente.Transaction;
 import clientefeedback.aplicacaocliente.VolleyConn;
 
 
-public class BuscaFragment extends Fragment implements Transaction,RecyclerViewOnClickListenerHack {
+@SuppressLint("ValidFragment")
+public class BuscaFragment extends Fragment implements Transaction,RecyclerViewOnClickListenerHack, SnackMessageInterface {
     static FragmentManager fragmentManager;
     private Context c = getContext();
     private boolean mSearchCheck;
@@ -83,7 +88,18 @@ public class BuscaFragment extends Fragment implements Transaction,RecyclerViewO
 
         (new VolleyConn(getContext(), this)).execute();
 
-
+        rootView.setOnKeyListener( new View.OnKeyListener()
+        {
+            @Override
+            public boolean onKey( View v, int keyCode, KeyEvent event )
+            {
+                if( keyCode == KeyEvent.KEYCODE_BACK )
+                {
+                    getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                }
+                return false;
+            }
+        } );
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rv_list_busca);
         mRecyclerView.setHasFixedSize(true);
 
@@ -256,10 +272,15 @@ public class BuscaFragment extends Fragment implements Transaction,RecyclerViewO
                 adapter = new BuscaEmpresaAdapter(getActivity(), mList);
                 adapter.setRecyclerViewOnClickListenerHack(this);
                 mRecyclerView.setAdapter(adapter);
+
+            }else{
+
+
             }
         }
         catch(Exception e){
             e.printStackTrace();
+            new SnackMessage(this).snackShowError(getView());
         }
         finally {
             progressBar.setVisibility(View.GONE);
@@ -293,7 +314,7 @@ public class BuscaFragment extends Fragment implements Transaction,RecyclerViewO
     @Override
     public void onClickListener(View view, int position) {
         BuscaEmpresaAdapter adapter = (BuscaEmpresaAdapter) mRecyclerView.getAdapter();
-        new CarregaEmpresaRequest(view, getContext(), fragmentManager, (int)adapter.getItemId(position));
+        new CarregaEmpresaRequest(getView(), getContext(), fragmentManager, (int)adapter.getItemId(position));
     }
 
     @Override
@@ -315,5 +336,14 @@ public class BuscaFragment extends Fragment implements Transaction,RecyclerViewO
 
         return(lista);
     }
+
+    @Override
+    public void executeAfterMessage() {
+        (new VolleyConn(getContext(), this)).execute();
+
+    }
+
+
+
 
 }
