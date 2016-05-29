@@ -559,8 +559,9 @@ public class CadastrarEmpresaActivity extends AppCompatActivity {
         }){
             @Override
             public Map<String, String> getParams() throws AuthFailureError {
-                String encodedCredentials = Base64.encodeToString(gson.toJson(emp).getBytes(), Base64.NO_WRAP);
-                params.put("empresa", encodedCredentials);
+//                String encodedCredentials = Base64.encodeToString(gson.toJson(emp).getBytes(), Base64.NO_WRAP);
+//                params.put("empresa", encodedCredentials);
+                params.put("empresa",gson.toJson(emp));
                 return params;
             }
         };
