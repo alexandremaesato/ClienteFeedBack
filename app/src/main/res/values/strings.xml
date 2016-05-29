@@ -184,5 +184,14 @@
         <item>Mais Comentados</item>
         <item>Menos Comentados</item>
     </string-array>
+    <string name="title_activity_cadastrar_produto">CadastrarProdutoActivity</string>
+
+    <!--Cadastrar produto strings-->
+    <string name="nome">Nome:</string>
+    <string name="preco">Preço:</string>
+    <string name="descricao_produto">Descrição:</string>
+    <string name="cadastro_produto">Cadastro de Produto</string>
+    <string name="categoria">Categoria:</string>
+    <string name="culinaria">Culinária:</string>
 
 </resources>

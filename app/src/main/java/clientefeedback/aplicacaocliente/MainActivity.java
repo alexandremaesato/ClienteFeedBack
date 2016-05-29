@@ -51,6 +51,7 @@ import clientefeedback.aplicacaocliente.Busca.BuscaFragment;
 import clientefeedback.aplicacaocliente.Empresa.CadastrarEmpresaActivity;
 import clientefeedback.aplicacaocliente.Empresa.PrincipalEmpresaFragment;
 import clientefeedback.aplicacaocliente.Login.VolleyConnCadastrar;
+import clientefeedback.aplicacaocliente.Produto.CadastrarProdutoActivity;
 import clientefeedback.aplicacaocliente.Services.AutorizacaoRequest;
 import clientefeedback.aplicacaocliente.Services.CadastrarAutenticacaoRequest;
 import clientefeedback.aplicacaocliente.Services.Url;
@@ -145,6 +146,8 @@ public class MainActivity extends AppCompatActivity
             mFragment = new PrincipalEmpresaFragment();
 
         } else if (id == R.id.nav_send) {
+            Intent it = new Intent(this, CadastrarProdutoActivity.class);
+            startActivity(it);
 
         } else if (id == R.id.nav_busca) {
             mFragment = new BuscaFragment(mFragmentManager);

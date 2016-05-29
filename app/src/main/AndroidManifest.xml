@@ -32,15 +32,18 @@
             </intent-filter>
         </activity>
         <activity
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:name=".Empresa.CadastrarEmpresaActivity"
-            />
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize" />
         <activity android:name=".Login.LoginActivity" />
         <activity
             android:name=".Login.CadastrarAutenticacao"
             android:label="@string/title_activity_cadastrar_autenticacao"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Busca.FilterActivity"></activity>
+        <activity android:name=".Busca.FilterActivity" />
+        <activity
+            android:name=".Produto.CadastrarProdutoActivity"
+            android:label="@string/title_activity_cadastrar_produto"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>
