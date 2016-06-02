@@ -1,4 +1,4 @@
-package clientefeedback.aplicacaocliente.Avaliacao;
+package clientefeedback.aplicacaocliente.Comentario;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -13,12 +13,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
 import java.util.HashMap;
 
 import clientefeedback.aplicacaocliente.Models.Avaliacao;
+import clientefeedback.aplicacaocliente.Models.Comentario;
 import clientefeedback.aplicacaocliente.R;
 import clientefeedback.aplicacaocliente.RequestData;
 import clientefeedback.aplicacaocliente.Services.Url;
@@ -28,18 +30,19 @@ import clientefeedback.aplicacaocliente.VolleyConn;
 /**
  * Created by Alexandre on 18/05/2016.
  */
-public class AvaliacaoDialogFragment extends DialogFragment implements Transaction{
+public class ComentarioDialogFragment extends DialogFragment implements Transaction{
     ProgressBar progressBar;
-    Avaliacao avaliacao;
-    RatingBar ratingBar;
+    Comentario comentario;
     EditText editTextComentario;
+    Button comentar;
+    Button cancelar;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            avaliacao = bundle.getParcelable("avaliacao");
+            comentario = bundle.getParcelable("comentario");
         }
 
     }
@@ -48,26 +51,29 @@ public class AvaliacaoDialogFragment extends DialogFragment implements Transacti
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        View view = inflater.inflate(R.layout.dialog_fragment_avaliacao, container);
+        View view = inflater.inflate(R.layout.dialog_fragment_comentario, container);
         progressBar = (ProgressBar)view.findViewById(R.id.progressBarDialog);
         progressBar.setVisibility(View.GONE);
 
-        ratingBar = (RatingBar) view.findViewById(R.id.ratingBarDialog);
-        Integer notaInt = avaliacao.getNota();
-        Float notaFloat = notaInt.floatValue();
-        notaFloat = (notaFloat/10)/2;
-        ratingBar.setRating(notaFloat);
+        editTextComentario = (EditText)view.findViewById(R.id.editTextComentario);
+//        if(comentario.getDescricao() != "" && comentario.getDescricao() != "null") {
+//            editTextComentario.setText(comentario.getDescricao());
+//        }
 
-
-        editTextComentario = (EditText)view.findViewById(R.id.etComentario);
-        editTextComentario.setText(avaliacao.getDescricao());
-
-        Button btnEnviarAvaliacao = (Button) view.findViewById(R.id.btnEnviarAvaliacao);
-        btnEnviarAvaliacao.setOnClickListener(new Button.OnClickListener() {
+        Button btnEnviarComentario = (Button) view.findViewById(R.id.btnComentar);
+        btnEnviarComentario.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
                 doRequest();
-                getTargetFragment().onActivityResult(getTargetRequestCode(), 1, getActivity().getIntent());
+                //getTargetFragment().onActivityResult(getTargetRequestCode(), 1, getActivity().getIntent());
+                //dismiss();
+            }
+        });
+
+        Button btnCancelar = (Button)view.findViewById(R.id.btnCancelar);
+        btnCancelar.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 dismiss();
             }
         });
@@ -109,19 +115,22 @@ public class AvaliacaoDialogFragment extends DialogFragment implements Transacti
     @Override
     public void doAfter(String answer) {
         progressBar.setVisibility(View.GONE);
+        if(!"".equals(answer)){
+            Toast.makeText(getContext(), answer, Toast.LENGTH_SHORT).show();
+            if("Comentario Inserido com sucesso".equals(answer)){
+                dismiss();
+            }
+        }
+
+
     }
 
     @Override
     public RequestData getRequestData() {
         HashMap<String,String> params = new HashMap<>();
         Gson gson = new Gson();
-        Float f = ratingBar.getRating();
-        f = f *10*2;
-        Integer i = f.intValue();
-        avaliacao.setNota(i);
-        avaliacao.setDescricao(editTextComentario.getText().toString());
-
-        params.put("avaliacao", gson.toJson(avaliacao));
-        return( new RequestData(Url.getUrl()+"avaliacao/setAvaliacao", "", params) );
+        comentario.setDescricao(editTextComentario.getText().toString());
+        params.put("comentario", gson.toJson(comentario));
+        return( new RequestData(Url.getUrl()+"comentario/setComentario", "", params) );
     }
 }
