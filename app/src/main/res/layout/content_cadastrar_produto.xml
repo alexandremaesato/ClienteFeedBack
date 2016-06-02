@@ -159,8 +159,14 @@
 
                     <Spinner
                         android:id="@+id/spcategoria"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_column="2"
+                        android:layout_weight="1"
+                        android:paddingLeft="5dp"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/border_fields"
+                        android:entries="@array/categoria"/>
 
             </TableRow>
 
@@ -185,8 +191,14 @@
 
                 <Spinner
                     android:id="@+id/spculinaria"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_column="2"
+                    android:layout_weight="1"
+                    android:paddingLeft="5dp"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/border_fields"
+                    android:entries="@array/tipo_cozinhas"/>
 
             </TableRow>
 

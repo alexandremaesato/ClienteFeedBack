@@ -43,6 +43,7 @@
         <activity
             android:name=".Produto.CadastrarProdutoActivity"
             android:label="@string/title_activity_cadastrar_produto"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme"></activity>
     </application>
 

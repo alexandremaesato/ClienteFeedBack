@@ -45,7 +45,7 @@
     <string name="add_imagem_camera">Use a Camera</string>
     <string name="add_imagem_cancel">Cancelar</string>
     <string name="select_file">Selecione um Arquivo</string>
-    <string name="nome_obrigatorio">Nome é Obrigatório</string>
+    <string name="nome_obrigatorio">Nome da Empresa é Obrigatório</string>
     <string name="dscr_obrigatorio">Descrição é Obrigatória</string>
     <string name="rua_obrigatorio">Rua é Obrigatório</string>
     <string name="numero_local_obrigatorio">Numero é Obrigatório</string>
@@ -129,7 +129,7 @@
     <string name="erro401Cadastro">Esse email já está cadastrado!</string>
 
 
-    <!-- Categorias de Comidas -->
+    <!-- Culinaria -->
     <string-array name="tipo_cozinhas">
         <item>Árabe</item>
         <item>Norte Americana</item>
@@ -142,6 +142,13 @@
         <item>Judáica</item>
         <item>Tailandesa</item>
         <item>Chinesa</item>
+    </string-array>
+
+    <!-- Categoria -->
+    <string-array name="categoria">
+        <item>Prato</item>
+        <item>Bebida</item>
+        <item>Sobremesa</item>
     </string-array>
 
     <!-- Estados -->
@@ -193,5 +200,8 @@
     <string name="cadastro_produto">Cadastro de Produto</string>
     <string name="categoria">Categoria:</string>
     <string name="culinaria">Culinária:</string>
+    <string name="nome_produto_obrigatorio">Nome do produto é obrigatório</string>
+    <string name="descricao_produto_obrigatorio">Descrição do Produto é obrigatório</string>
+    <string name="preco_obrigatorio">Preço do Produto é obrigatório</string>
 
 </resources>

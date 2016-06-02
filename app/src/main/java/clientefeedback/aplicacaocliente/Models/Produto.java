@@ -13,8 +13,9 @@ public class Produto implements Parcelable {
     private int produtoid;
     private String nomeProduto;
     private int categoria;
+    private int culinaria;
     private String descricao;
-    private float preco;
+    private Double preco;
     private Imagem imagemPerfil;
     private List<Imagem> imagensNaoOficiais;
     private List<Imagem> imagensOficiais;
@@ -22,6 +23,7 @@ public class Produto implements Parcelable {
     private List<Avaliacao> avaliacoes;
     private int qtdeComentarios;
     private int qtdeAvaliacoes;
+    private int empresaid;
 
     public Produto(){
 
@@ -31,8 +33,9 @@ public class Produto implements Parcelable {
         produtoid = in.readInt();
         nomeProduto = in.readString();
         categoria = in.readInt();
+        culinaria = in.readInt();
         descricao = in.readString();
-        preco = in.readFloat();
+        preco = in.readDouble();
         imagemPerfil = in.readParcelable(Imagem.class.getClassLoader());
         imagensNaoOficiais = in.createTypedArrayList(Imagem.CREATOR);
         imagensOficiais = in.createTypedArrayList(Imagem.CREATOR);
@@ -40,6 +43,7 @@ public class Produto implements Parcelable {
         avaliacoes = in.createTypedArrayList(Avaliacao.CREATOR);
         qtdeComentarios = in.readInt();
         qtdeAvaliacoes = in.readInt();
+        empresaid = in.readInt();
     }
 
     public static final Creator<Produto> CREATOR = new Creator<Produto>() {
@@ -78,6 +82,14 @@ public class Produto implements Parcelable {
         this.categoria = categoria;
     }
 
+    public int getCulinaria() {
+        return culinaria;
+    }
+
+    public void setCulinaria(int culinaria) {
+        this.culinaria = culinaria;
+    }
+
     public String getDescricao() {
         return descricao;
     }
@@ -86,11 +98,11 @@ public class Produto implements Parcelable {
         this.descricao = descricao;
     }
 
-    public float getPreco() {
+    public Double getPreco() {
         return preco;
     }
 
-    public void setPreco(float preco) {
+    public void setPreco(Double preco) {
         this.preco = preco;
     }
 
@@ -150,6 +162,15 @@ public class Produto implements Parcelable {
         this.qtdeAvaliacoes = qtdeAvaliacoes;
     }
 
+
+    public int getEmpresaid() {
+        return empresaid;
+    }
+
+    public void setEmpresaid(int empresaid) {
+        this.empresaid = empresaid;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -160,8 +181,9 @@ public class Produto implements Parcelable {
         parcel.writeInt(produtoid);
         parcel.writeString(nomeProduto);
         parcel.writeInt(categoria);
+        parcel.writeInt(culinaria);
         parcel.writeString(descricao);
-        parcel.writeFloat(preco);
+        parcel.writeDouble(preco);
         parcel.writeValue(imagemPerfil);
         parcel.writeValue(imagensNaoOficiais);
         parcel.writeValue(imagensOficiais);
@@ -169,6 +191,7 @@ public class Produto implements Parcelable {
         parcel.writeValue(avaliacoes);
         parcel.writeInt(qtdeComentarios);
         parcel.writeInt(qtdeAvaliacoes);
+        parcel.writeInt(empresaid);
     }
 }
 
